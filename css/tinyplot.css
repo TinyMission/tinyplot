@@ -2,40 +2,38 @@
   position: relative;
   min-height: 400px;
   font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif; }
+  .tinyplot-chart > div {
+    position: absolute; }
+  .tinyplot-chart canvas {
+    width: 100%;
+    height: 100%; }
   .tinyplot-chart .text {
     color: #222; }
   .tinyplot-chart .title-area {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    height: 8%; }
+    left: 64px;
+    right: 64px;
+    height: 64px; }
     .tinyplot-chart .title-area .title {
       text-align: center;
       font-size: 22px; }
-  .tinyplot-chart canvas {
-    position: absolute;
-    display: block; }
   .tinyplot-chart .y-axis {
-    width: 8%;
-    top: 8%;
-    bottom: 8%;
-    height: 84%;
+    width: 64px;
+    top: 64px;
+    bottom: 64px;
     z-index: 2; }
   .tinyplot-chart .data {
-    left: 8%;
-    right: 8%;
-    top: 8%;
-    bottom: 8%;
+    left: 64px;
+    right: 64px;
+    top: 64px;
+    bottom: 64px;
     background: #fff;
-    width: 84%;
-    height: 84%;
     z-index: 1;
     border: 1px solid #ccc; }
   .tinyplot-chart .x-axis {
-    height: 8%;
-    left: 8%;
-    right: 8%;
-    width: 84%;
+    height: 64px;
+    left: 64px;
+    right: 64px;
     bottom: 0;
     z-index: 2; }
 

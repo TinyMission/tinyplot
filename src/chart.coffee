@@ -1,69 +1,4 @@
 
-class Axis
-	constructor: (@canvas, min, max) ->
-		@dirty = true
-		@step = 1
-		@clampMax = null
-		@clampMin = null
-		this.resize(min, max)
-
-	toString: ->
-		"#{@min} to #{@max}, step = #{@step} (clamp at #{@clampMin} to #{@clampMax})"
-
-	makeDirty: ->
-		@dirty = true
-
-	resize: (min, max) ->
-		@min = min
-		@max = max
-		@span = max - min
-		exp = Math.floor(Math.log10(@span)-1)
-		@step = Math.pow(10, exp)
-		while @span/@step > 10
-			@step *= 2
-
-	zoom: (factor) ->
-		avg = (@max + @min) / 2
-		newSpan = @span / factor
-		if @clampMin and @clampMax and newSpan > (@clampMax - @clampMin)
-			@min = @clampMin
-			@max = @clampMax
-			@span = @clampMax - @clampMin
-		else
-			@min = avg - newSpan/2
-			@max = avg + newSpan / 2
-			@span = newSpan
-		@dirty = true
-
-	pan: (delta) ->
-		if delta < 0
-			if !@clampMax or @clampMax > @max
-				@max = Math.min(@clampMax, @max - delta)
-				@min = @max - @span
-		else # delta > 0
-			if !@clampMin or @clampMin < @min
-				@min = Math.max(@clampMin, @min - delta)
-				@max = @min + @span
-		@dirty = true
-
-	round: ->
-		this.resize Math.floor(@min / @step)*@step, Math.ceil(@max / @step)*@step
-
-	clamp: ->
-		@clampMin = @min
-		@clampMax = @max
-
-	render: ->
-		@dirty = false
-
-class XAxis extends Axis
-	constructor: (canvas, min, max) ->
-		super canvas, min, max
-
-class YAxis extends Axis
-	constructor: (canvas, min, max) ->
-		super canvas, min, max
-
 
 # Wrap all canvas methods so we can do scaling and such
 class RenderContext
@@ -94,6 +29,13 @@ class RenderContext
 		@canvas.lineTo p.x, p.y
 
 
+# gets the canvas element out of a container and sets the size
+initCanvas = (container) ->
+	canvasElem = container.find('canvas')[0]
+	canvasElem.width = container.width()
+	canvasElem.height = container.height()
+	canvasElem.getContext('2d')
+
 
 class @Chart
 
@@ -113,19 +55,18 @@ class @Chart
 		@titleArea = $('<div class="title-area"></div>').appendTo @container
 		$("<div class='title text'>#{opts.title}</div>").appendTo @titleArea
 
-		@xAxisCanvasElem = $('<canvas class="x-axis"></canvas>').appendTo @container
-		@xAxis = new XAxis @xAxisCanvasElem[0].getContext('2d'), 0, 1
+		@xAxisCanvasContainer = $('<div class="x-axis"><canvas/></div>').appendTo @container
+		@xAxisCanvas = initCanvas(@xAxisCanvasContainer)
+		@xAxis = new XAxis 0, 1
 
-		@yAxisCanvasElem = $('<canvas class="y-axis"></canvas>').appendTo @container
-		@yAxis = new YAxis @yAxisCanvasElem[0].getContext('2d'), 0, 1
+		@yAxisCanvasContainer = $('<div class="y-axis"><canvas/></div>').appendTo @container
+		@yAxisCanvas = initCanvas(@yAxisCanvasContainer)
+		@yAxis = new YAxis 0, 1
 
-		@dataCanvasElem = $('<canvas class="data"></canvas>').appendTo @container
-		@dataCanvas = @dataCanvasElem[0].getContext('2d')
+		@dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo @container
+		@dataCanvas = initCanvas @dataCanvasContainer
 
-		@dataCanvasElem[0].width = @dataCanvasElem.width()
-		@dataCanvasElem[0].height = @dataCanvasElem.height()
-
-		interact(@dataCanvasElem[0])
+		interact(@dataCanvasContainer[0])
 			.draggable(
 				inertia: true
 				onmove: (evt) =>
@@ -135,7 +76,6 @@ class @Chart
 		this.makeContext()
 
 		@container.on 'mousewheel', (evt) =>
-#			console.log evt.deltaX, evt.deltaY, evt.deltaFactor
 			this.zoom(1 + evt.deltaY / 1000)
 			evt.preventDefault()
 
@@ -166,8 +106,8 @@ class @Chart
 	makeContext: ->
 		@context = new RenderContext(
 			@dataCanvas
-			@dataCanvasElem.width()
-			@dataCanvasElem.height()
+			@dataCanvasContainer.width()
+			@dataCanvasContainer.height()
 			@xAxis
 			@yAxis
 		)
@@ -198,9 +138,9 @@ class @Chart
 	render: ->
 		startTime = new Date().getTime()
 		if @xAxis.dirty
-			@xAxis.render()
+			@xAxis.render @xAxisCanvas, @xAxisCanvasContainer.width(), @xAxisCanvasContainer.height()
 		if @yAxis.dirty
-			@yAxis.render()
+			@yAxis.render @yAxisCanvas, @yAxisCanvasContainer.width(), @yAxisCanvasContainer.height()
 		@context.clear()
 		@onRender @context
 		stopTime = new Date().getTime()

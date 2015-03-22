@@ -1,6 +1,5 @@
 
-$axis-size: 8%
-$data-size: 100% - 2*$axis-size
+$axis-size: 64px
 $min-chart-height: 400px
 $pad: 4px
 $axis-color: #ccc
@@ -10,6 +9,11 @@ $text-color: #222
 	position: relative
 	min-height: $min-chart-height
 	font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif
+	> div
+		position: absolute
+	canvas
+		width: 100%
+		height: 100%
 	.text
 		color: $text-color
 	.title-area
@@ -20,14 +24,10 @@ $text-color: #222
 		.title
 			text-align: center
 			font-size: 22px
-	canvas
-		position: absolute
-		display: block
 	.y-axis
 		width: $axis-size
 		top: $axis-size
 		bottom: $axis-size
-		height: $data-size
 		z-index: 2
 	.data
 		left: $axis-size
@@ -35,14 +35,11 @@ $text-color: #222
 		top: $axis-size
 		bottom: $axis-size
 		background: #fff
-		width: $data-size
-		height: $data-size
 		z-index: 1
 		border: 1px solid $axis-color
 	.x-axis
 		height: $axis-size
 		left: $axis-size
 		right: $axis-size
-		width: $data-size
 		bottom: 0
 		z-index: 2

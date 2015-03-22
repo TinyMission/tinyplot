@@ -8,7 +8,7 @@ module.exports = (grunt) ->
 				separator: ';'
 			}
 			dist: {
-				src: ['vendor/jquery.mousewheel.js', 'vendor/interact-1.2.4.js', 'node_modules/moment/moment.js','node_modules/lodash/index.js', 'src/chart.js', 'src/main.js']
+				src: ['vendor/jquery.mousewheel.js', 'vendor/interact-1.2.4.js', 'node_modules/moment/moment.js','node_modules/lodash/index.js', 'src/axes.js',  'src/chart.js', 'src/main.js']
 				dest: 'build/<%= pkg.name %>.js'
 			}
 		}
