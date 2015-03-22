@@ -1,0 +1,42 @@
+.tinyplot-chart {
+  position: relative;
+  min-height: 400px;
+  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif; }
+  .tinyplot-chart .text {
+    color: #222; }
+  .tinyplot-chart .title-area {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    height: 8%; }
+    .tinyplot-chart .title-area .title {
+      text-align: center;
+      font-size: 22px; }
+  .tinyplot-chart canvas {
+    position: absolute;
+    display: block; }
+  .tinyplot-chart .y-axis {
+    width: 8%;
+    top: 8%;
+    bottom: 8%;
+    height: 84%;
+    z-index: 2; }
+  .tinyplot-chart .data {
+    left: 8%;
+    right: 8%;
+    top: 8%;
+    bottom: 8%;
+    background: #fff;
+    width: 84%;
+    height: 84%;
+    z-index: 1;
+    border: 1px solid #ccc; }
+  .tinyplot-chart .x-axis {
+    height: 8%;
+    left: 8%;
+    right: 8%;
+    width: 84%;
+    bottom: 0;
+    z-index: 2; }
+
+/*# sourceMappingURL=tinyplot.css.map */

@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEA,UAAU;EACT,UAAU,EAAE,KAAK",
+"sources": ["../css/tinyplot.sass"],
+"names": [],
+"file": "tinyplot.css"
+}

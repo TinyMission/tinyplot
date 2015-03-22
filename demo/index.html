@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>tinyplot demo</title>
+    <link rel="stylesheet" href="../css/tinyplot.css"/>
+    <link rel="stylesheet" href="demo.css"/>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="../vendor/jquery.mousewheel.js"></script>
+    <script src="../vendor/interact-1.2.4.js"></script>
+    <script src="../node_modules/lodash/index.js"></script>
+    <script src="../node_modules/moment/moment.js"></script>
+    <script src="../src/chart.js"></script>
+    <script src="../src/main.js"></script>
+</head>
+<body>
+    <h1>tinyplot demo</h1>
+
+    <div id="timeseries"></div>
+
+    <script>
+        // generate some random time series data
+        var N = 1000
+        var foo = 0
+        var bar = 0
+        var data = []
+        var now = moment().valueOf()
+        for (var i=0; i<N; i++) {
+            foo += (Math.random()-0.5)
+            bar += (Math.random()-0.5)
+            data.push({
+                foo: foo,
+                bar: bar,
+                time: now + i*16
+            })
+        }
+        console.log(data[0])
+
+
+        tinyplot.timeseries('#timeseries', data, {
+            timeField: 'time',
+            xLabel: 'Time',
+            yLabel: 'Foo / Bar',
+            title: 'Demo Timeseries',
+            series: [
+                {yField: 'foo', color: '#00a'},
+                {yField: 'bar', color: '#0a0'}
+            ]
+        })
+    </script>
+</body>
+</html>
