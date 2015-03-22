@@ -42,7 +42,7 @@ class @Chart
 	constructor: (container, opts) ->
 		@container = $(container)
 		@container.addClass 'tinyplot-chart'
-		@onRender = (context) -> {}
+		@opts = opts
 
 		_.defaults opts, {
 			title: 'Chart Title'
@@ -134,6 +134,7 @@ class @Chart
 		if hasPanned
 			this.render()
 
+	renderData: (context) -> {}
 
 	render: ->
 		startTime = new Date().getTime()
@@ -142,6 +143,6 @@ class @Chart
 		if @yAxis.dirty
 			@yAxis.render @yAxisCanvas, @yAxisCanvasContainer.width(), @yAxisCanvasContainer.height()
 		@context.clear()
-		@onRender @context
+		this.renderData @context
 		stopTime = new Date().getTime()
 		console.log "rendered chart in #{stopTime-startTime}ms"

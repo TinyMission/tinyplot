@@ -38,7 +38,7 @@
         console.log(data[0])
 
 
-        tinyplot.timeseries('#timeseries', data, {
+        new tinyplot.TimeseriesChart('#timeseries', data, {
             timeField: 'time',
             xLabel: 'Time',
             yLabel: 'Foo / Bar',

@@ -102,7 +102,6 @@
       canvas.beginPath();
       while (x <= this.max) {
         xActual = Math.ceil((x - this.min) * scale) - 0.5;
-        console.log("x tick at " + x + " (" + xActual + ")");
         canvas.moveTo(xActual, 0);
         canvas.lineTo(xActual, this.tickSize);
         x += this.step;
@@ -130,7 +129,6 @@
       canvas.beginPath();
       while (y <= this.max) {
         yActual = Math.ceil(height - (y - this.min) * scale) - 0.5;
-        console.log("y tick at " + y + " (" + yActual + ")");
         canvas.moveTo(width - this.tickSize, yActual);
         canvas.lineTo(width, yActual);
         y += this.step;

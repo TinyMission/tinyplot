@@ -72,7 +72,6 @@ class @XAxis extends Axis
 		canvas.beginPath()
 		while x <= @max
 			xActual = Math.ceil((x-@min)*scale)-0.5
-			console.log "x tick at #{x} (#{xActual})"
 			canvas.moveTo xActual, 0
 			canvas.lineTo xActual, @tickSize
 			x += @step
@@ -91,7 +90,6 @@ class @YAxis extends Axis
 		canvas.beginPath()
 		while y <= @max
 			yActual = Math.ceil(height - (y-@min)*scale)-0.5
-			console.log "y tick at #{y} (#{yActual})"
 			canvas.moveTo width-@tickSize, yActual
 			canvas.lineTo width, yActual
 			y += @step

@@ -63,9 +63,7 @@
       var _this = this;
       this.container = $(container);
       this.container.addClass('tinyplot-chart');
-      this.onRender = function(context) {
-        return {};
-      };
+      this.opts = opts;
       _.defaults(opts, {
         title: 'Chart Title',
         xZoom: 'none',
@@ -162,6 +160,10 @@
       }
     };
 
+    Chart.prototype.renderData = function(context) {
+      return {};
+    };
+
     Chart.prototype.render = function() {
       var startTime, stopTime;
       startTime = new Date().getTime();
@@ -172,7 +174,7 @@
         this.yAxis.render(this.yAxisCanvas, this.yAxisCanvasContainer.width(), this.yAxisCanvasContainer.height());
       }
       this.context.clear();
-      this.onRender(this.context);
+      this.renderData(this.context);
       stopTime = new Date().getTime();
       return console.log("rendered chart in " + (stopTime - startTime) + "ms");
     };
