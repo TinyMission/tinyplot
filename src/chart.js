@@ -92,6 +92,10 @@
         onmove: function(evt) {
           return _this.pan(evt.dx, evt.dy);
         }
+      }).gesturable({
+        onmove: function(evt) {
+          return _this.zoom(1 + evt.ds);
+        }
       });
       this.makeContext();
       this.container.on('mousewheel', function(evt) {

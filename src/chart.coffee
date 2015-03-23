@@ -79,6 +79,10 @@ class @Chart
 				onmove: (evt) =>
 					this.pan evt.dx, evt.dy
 			)
+			.gesturable(
+				onmove: (evt) =>
+					this.zoom 1+evt.ds
+			)
 
 		this.makeContext()
 
