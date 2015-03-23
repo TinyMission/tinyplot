@@ -51,6 +51,7 @@ class @Chart
 			yZoom: 'none'
 			xLabel: 'x'
 			yLabel: 'y'
+			grid: null
 		}
 		@xZoomType = opts.xZoom
 		@yZoomType = opts.yZoom
@@ -156,6 +157,10 @@ class @Chart
 		if @yAxis.dirty
 			@yAxis.render @yAxisCanvas, @yFormatter, @yAxisCanvasContainer.width(), @yAxisCanvasContainer.height()
 		@context.clear()
+		if @opts.grid and @opts.grid.indexOf('x') >= 0
+			@xAxis.renderGrid @dataCanvas, @context.width, @context.height
+		if @opts.grid and @opts.grid.indexOf('y') >= 0
+			@yAxis.renderGrid @dataCanvas, @context.width, @context.height
 		this.renderData @context
 		stopTime = new Date().getTime()
 		console.log "rendered chart in #{stopTime-startTime}ms"

@@ -70,7 +70,8 @@
         xZoom: 'none',
         yZoom: 'none',
         xLabel: 'x',
-        yLabel: 'y'
+        yLabel: 'y',
+        grid: null
       });
       this.xZoomType = opts.xZoom;
       this.yZoomType = opts.yZoom;
@@ -186,6 +187,12 @@
         this.yAxis.render(this.yAxisCanvas, this.yFormatter, this.yAxisCanvasContainer.width(), this.yAxisCanvasContainer.height());
       }
       this.context.clear();
+      if (this.opts.grid && this.opts.grid.indexOf('x') >= 0) {
+        this.xAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+      }
+      if (this.opts.grid && this.opts.grid.indexOf('y') >= 0) {
+        this.yAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+      }
       this.renderData(this.context);
       stopTime = new Date().getTime();
       return console.log("rendered chart in " + (stopTime - startTime) + "ms");

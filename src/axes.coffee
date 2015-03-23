@@ -26,6 +26,7 @@ class Axis
 		@tickSize = 8
 		@fontSize = 12
 		@color = '#444'
+		@gridColor = '#ccc'
 		@label = null
 		this.resize(min, max)
 
@@ -79,6 +80,8 @@ class Axis
 		canvas.clearRect 0, 0, width, height
 		@dirty = false
 
+	renderGrid: (canvas, width, height) -> {}
+
 
 class @XAxis extends Axis
 	constructor: (canvas, min, max) ->
@@ -112,6 +115,18 @@ class @XAxis extends Axis
 
 		# draw the label
 		canvas.fillText @label, width/2, @tickSize + 3*@fontSize
+
+	renderGrid: (canvas, width, height) ->
+		scale = width / @span
+		x = Math.floor(@min/@step) * @step
+		canvas.strokeStyle = @gridColor
+		canvas.beginPath()
+		while x <= @max
+			xActual = Math.ceil((x-@min)*scale)-0.5
+			canvas.moveTo xActual, 0
+			canvas.lineTo xActual, height
+			x += @step
+		canvas.stroke()
 
 
 
@@ -158,5 +173,17 @@ class @YAxis extends Axis
 		canvas.translate @fontSize, height/2
 		canvas.rotate 3*Math.PI/2
 		canvas.fillText @label, 0, 0
+
+	renderGrid: (canvas, width, height) ->
+		scale = height / @span
+		y = Math.floor(@min/@step) * @step
+		canvas.strokeStyle = @gridColor
+		canvas.beginPath()
+		while y <= @max
+			yActual = Math.ceil(height - (y-@min)*scale)-0.5
+			canvas.moveTo 0, yActual
+			canvas.lineTo width, yActual
+			y += @step
+		canvas.stroke()
 
 

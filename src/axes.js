@@ -38,6 +38,7 @@
       this.tickSize = 8;
       this.fontSize = 12;
       this.color = '#444';
+      this.gridColor = '#ccc';
       this.label = null;
       this.resize(min, max);
     }
@@ -109,6 +110,10 @@
       return this.dirty = false;
     };
 
+    Axis.prototype.renderGrid = function(canvas, width, height) {
+      return {};
+    };
+
     return Axis;
 
   })();
@@ -145,6 +150,21 @@
         x += this.step;
       }
       return canvas.fillText(this.label, width / 2, this.tickSize + 3 * this.fontSize);
+    };
+
+    XAxis.prototype.renderGrid = function(canvas, width, height) {
+      var scale, x, xActual;
+      scale = width / this.span;
+      x = Math.floor(this.min / this.step) * this.step;
+      canvas.strokeStyle = this.gridColor;
+      canvas.beginPath();
+      while (x <= this.max) {
+        xActual = Math.ceil((x - this.min) * scale) - 0.5;
+        canvas.moveTo(xActual, 0);
+        canvas.lineTo(xActual, height);
+        x += this.step;
+      }
+      return canvas.stroke();
     };
 
     return XAxis;
@@ -190,6 +210,21 @@
       canvas.translate(this.fontSize, height / 2);
       canvas.rotate(3 * Math.PI / 2);
       return canvas.fillText(this.label, 0, 0);
+    };
+
+    YAxis.prototype.renderGrid = function(canvas, width, height) {
+      var scale, y, yActual;
+      scale = height / this.span;
+      y = Math.floor(this.min / this.step) * this.step;
+      canvas.strokeStyle = this.gridColor;
+      canvas.beginPath();
+      while (y <= this.max) {
+        yActual = Math.ceil(height - (y - this.min) * scale) - 0.5;
+        canvas.moveTo(0, yActual);
+        canvas.lineTo(width, yActual);
+        y += this.step;
+      }
+      return canvas.stroke();
     };
 
     return YAxis;
