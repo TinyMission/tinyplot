@@ -3,8 +3,7 @@ class @TimeseriesChart extends Chart
 	constructor: (container, data, opts) ->
 		_.defaults opts, {
 			timeField: 'time'
-			xLabel: 'time'
-			yLabel: 'y'
+			xLabel: 'Time'
 			xZoom: 'user'
 			yZoom: 'auto'
 			series: []

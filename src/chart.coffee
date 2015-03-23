@@ -48,6 +48,8 @@ class @Chart
 			title: 'Chart Title'
 			xZoom: 'none'
 			yZoom: 'none'
+			xLabel: 'x'
+			yLabel: 'y'
 		}
 		@xZoomType = opts.xZoom
 		@yZoomType = opts.yZoom
@@ -61,10 +63,12 @@ class @Chart
 		@xAxisCanvasContainer = $('<div class="x-axis"><canvas/></div>').appendTo @container
 		@xAxisCanvas = initCanvas(@xAxisCanvasContainer)
 		@xAxis = new XAxis 0, 1
+		@xAxis.label = @opts.xLabel
 
 		@yAxisCanvasContainer = $('<div class="y-axis"><canvas/></div>').appendTo @container
 		@yAxisCanvas = initCanvas(@yAxisCanvasContainer)
 		@yAxis = new YAxis 0, 1
+		@yAxis.label = @opts.yLabel
 
 		@dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo @container
 		@dataCanvas = initCanvas @dataCanvasContainer

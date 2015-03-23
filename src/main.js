@@ -11,8 +11,7 @@
       var mid, s, tMax, tMin, time, y, yMax, yMin, ys, _i, _j, _k, _len, _len1, _ref;
       _.defaults(opts, {
         timeField: 'time',
-        xLabel: 'time',
-        yLabel: 'y',
+        xLabel: 'Time',
         xZoom: 'user',
         yZoom: 'auto',
         series: []

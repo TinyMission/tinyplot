@@ -26,6 +26,7 @@ class Axis
 		@tickSize = 8
 		@fontSize = 12
 		@color = '#444'
+		@label = null
 		this.resize(min, max)
 
 	toString: ->
@@ -102,11 +103,15 @@ class @XAxis extends Axis
 		x = Math.floor(@min/@step) * @step
 		canvas.font = "#{@fontSize}px sans-serif"
 		canvas.textAlign = 'center'
+		canvas.fillStyle = @color
 		while x <= @max
 			xActual = Math.ceil((x-@min)*scale)-0.5
 			text = formatter.format(@span, x)
 			canvas.fillText text, xActual, @tickSize + @fontSize
 			x += @step
+
+		# draw the label
+		canvas.fillText @label, width/2, @tickSize + 3*@fontSize
 
 
 
@@ -135,6 +140,7 @@ class @YAxis extends Axis
 		y = Math.floor(@min/@step) * @step
 		canvas.font = "#{@fontSize}px sans-serif"
 		canvas.textAlign = 'right'
+		canvas.fillStyle = @color
 		while y <= @max
 			yActual = Math.ceil(height - (y-@min)*scale)-0.5
 			canvas.textBaseline = if yActual <= 0
@@ -146,5 +152,11 @@ class @YAxis extends Axis
 			text = formatter.format(@span, y)
 			canvas.fillText text, width-@tickSize-3, yActual
 			y += @step
+
+		# draw the label
+		canvas.textAlign = 'center'
+		canvas.translate @fontSize, height/2
+		canvas.rotate 3*Math.PI/2
+		canvas.fillText @label, 0, 0
 
 

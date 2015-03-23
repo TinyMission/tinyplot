@@ -67,7 +67,9 @@
       _.defaults(opts, {
         title: 'Chart Title',
         xZoom: 'none',
-        yZoom: 'none'
+        yZoom: 'none',
+        xLabel: 'x',
+        yLabel: 'y'
       });
       this.xZoomType = opts.xZoom;
       this.yZoomType = opts.yZoom;
@@ -78,9 +80,11 @@
       this.xAxisCanvasContainer = $('<div class="x-axis"><canvas/></div>').appendTo(this.container);
       this.xAxisCanvas = initCanvas(this.xAxisCanvasContainer);
       this.xAxis = new XAxis(0, 1);
+      this.xAxis.label = this.opts.xLabel;
       this.yAxisCanvasContainer = $('<div class="y-axis"><canvas/></div>').appendTo(this.container);
       this.yAxisCanvas = initCanvas(this.yAxisCanvasContainer);
       this.yAxis = new YAxis(0, 1);
+      this.yAxis.label = this.opts.yLabel;
       this.dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo(this.container);
       this.dataCanvas = initCanvas(this.dataCanvasContainer);
       interact(this.dataCanvasContainer[0]).draggable({

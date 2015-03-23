@@ -38,6 +38,7 @@
       this.tickSize = 8;
       this.fontSize = 12;
       this.color = '#444';
+      this.label = null;
       this.resize(min, max);
     }
 
@@ -120,7 +121,7 @@
     }
 
     XAxis.prototype.render = function(canvas, formatter, width, height) {
-      var scale, text, x, xActual, _results;
+      var scale, text, x, xActual;
       XAxis.__super__.render.call(this, canvas, formatter, width, height);
       scale = width / this.span;
       x = Math.floor(this.min / this.step) * this.step;
@@ -136,14 +137,14 @@
       x = Math.floor(this.min / this.step) * this.step;
       canvas.font = "" + this.fontSize + "px sans-serif";
       canvas.textAlign = 'center';
-      _results = [];
+      canvas.fillStyle = this.color;
       while (x <= this.max) {
         xActual = Math.ceil((x - this.min) * scale) - 0.5;
         text = formatter.format(this.span, x);
         canvas.fillText(text, xActual, this.tickSize + this.fontSize);
-        _results.push(x += this.step);
+        x += this.step;
       }
-      return _results;
+      return canvas.fillText(this.label, width / 2, this.tickSize + 3 * this.fontSize);
     };
 
     return XAxis;
@@ -158,7 +159,7 @@
     }
 
     YAxis.prototype.render = function(canvas, formatter, width, height) {
-      var scale, text, y, yActual, _results;
+      var scale, text, y, yActual;
       YAxis.__super__.render.call(this, canvas, formatter, width, height);
       scale = height / this.span;
       y = Math.floor(this.min / this.step) * this.step;
@@ -177,15 +178,18 @@
       y = Math.floor(this.min / this.step) * this.step;
       canvas.font = "" + this.fontSize + "px sans-serif";
       canvas.textAlign = 'right';
-      _results = [];
+      canvas.fillStyle = this.color;
       while (y <= this.max) {
         yActual = Math.ceil(height - (y - this.min) * scale) - 0.5;
         canvas.textBaseline = yActual <= 0 ? 'top' : yActual >= height - 1 ? 'alphabetic' : 'middle';
         text = formatter.format(this.span, y);
         canvas.fillText(text, width - this.tickSize - 3, yActual);
-        _results.push(y += this.step);
+        y += this.step;
       }
-      return _results;
+      canvas.textAlign = 'center';
+      canvas.translate(this.fontSize, height / 2);
+      canvas.rotate(3 * Math.PI / 2);
+      return canvas.fillText(this.label, 0, 0);
     };
 
     return YAxis;
