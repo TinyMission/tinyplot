@@ -52,6 +52,9 @@ class @Chart
 		@xZoomType = opts.xZoom
 		@yZoomType = opts.yZoom
 
+		@xFormatter = new NumberFormatter()
+		@yFormatter = new NumberFormatter()
+
 		@titleArea = $('<div class="title-area"></div>').appendTo @container
 		$("<div class='title text'>#{opts.title}</div>").appendTo @titleArea
 
@@ -139,9 +142,9 @@ class @Chart
 	render: ->
 		startTime = new Date().getTime()
 		if @xAxis.dirty
-			@xAxis.render @xAxisCanvas, @xAxisCanvasContainer.width(), @xAxisCanvasContainer.height()
+			@xAxis.render @xAxisCanvas, @xFormatter, @xAxisCanvasContainer.width(), @xAxisCanvasContainer.height()
 		if @yAxis.dirty
-			@yAxis.render @yAxisCanvas, @yAxisCanvasContainer.width(), @yAxisCanvasContainer.height()
+			@yAxis.render @yAxisCanvas, @yFormatter, @yAxisCanvasContainer.width(), @yAxisCanvasContainer.height()
 		@context.clear()
 		this.renderData @context
 		stopTime = new Date().getTime()

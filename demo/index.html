@@ -21,7 +21,7 @@
 
     <script>
         // generate some random time series data
-        var N = 1000
+        var N = 5000
         var foo = 0
         var bar = 0
         var data = []
@@ -32,7 +32,7 @@
             data.push({
                 foo: foo,
                 bar: bar,
-                time: now + i*16
+                time: now + i*360000
             })
         }
         console.log(data[0])

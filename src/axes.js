@@ -4,13 +4,39 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+  this.NumberFormatter = (function() {
+    function NumberFormatter() {}
+
+    NumberFormatter.prototype.format = function(span, value) {
+      return value.toString();
+    };
+
+    return NumberFormatter;
+
+  })();
+
+  this.TimeFormatter = (function() {
+    function TimeFormatter() {}
+
+    TimeFormatter.prototype.format = function(span, value) {
+      var formatString, t;
+      t = moment(value);
+      formatString = span < 10000 ? 'mm:ss.SS' : span < 3600 * 1000 ? 'hh:mm:ss' : span < 3600 * 1000 * 72 ? 'MM/DD hh:mm A' : 'YYYY-MM-DD';
+      return t.format(formatString);
+    };
+
+    return TimeFormatter;
+
+  })();
+
   Axis = (function() {
     function Axis(min, max) {
       this.dirty = true;
       this.step = 1;
       this.clampMax = null;
       this.clampMin = null;
-      this.tickSize = 12;
+      this.tickSize = 8;
+      this.fontSize = 12;
       this.color = '#444';
       this.resize(min, max);
     }
@@ -77,7 +103,7 @@
       return this.clampMax = this.max;
     };
 
-    Axis.prototype.render = function(canvas, width, height) {
+    Axis.prototype.render = function(canvas, formatter, width, height) {
       canvas.clearRect(0, 0, width, height);
       return this.dirty = false;
     };
@@ -93,9 +119,9 @@
       XAxis.__super__.constructor.call(this, canvas, min, max);
     }
 
-    XAxis.prototype.render = function(canvas, width, height) {
-      var scale, x, xActual;
-      XAxis.__super__.render.call(this, canvas, width, height);
+    XAxis.prototype.render = function(canvas, formatter, width, height) {
+      var scale, text, x, xActual, _results;
+      XAxis.__super__.render.call(this, canvas, formatter, width, height);
       scale = width / this.span;
       x = Math.floor(this.min / this.step) * this.step;
       canvas.strokeStyle = this.color;
@@ -106,7 +132,18 @@
         canvas.lineTo(xActual, this.tickSize);
         x += this.step;
       }
-      return canvas.stroke();
+      canvas.stroke();
+      x = Math.floor(this.min / this.step) * this.step;
+      canvas.font = "" + this.fontSize + "px sans-serif";
+      canvas.textAlign = 'center';
+      _results = [];
+      while (x <= this.max) {
+        xActual = Math.ceil((x - this.min) * scale) - 0.5;
+        text = formatter.format(this.span, x);
+        canvas.fillText(text, xActual, this.tickSize + this.fontSize);
+        _results.push(x += this.step);
+      }
+      return _results;
     };
 
     return XAxis;
@@ -120,20 +157,35 @@
       YAxis.__super__.constructor.call(this, canvas, min, max);
     }
 
-    YAxis.prototype.render = function(canvas, width, height) {
-      var scale, y, yActual;
-      YAxis.__super__.render.call(this, canvas, width, height);
+    YAxis.prototype.render = function(canvas, formatter, width, height) {
+      var scale, text, y, yActual, _results;
+      YAxis.__super__.render.call(this, canvas, formatter, width, height);
       scale = height / this.span;
       y = Math.floor(this.min / this.step) * this.step;
       canvas.strokeStyle = this.color;
       canvas.beginPath();
       while (y <= this.max) {
         yActual = Math.ceil(height - (y - this.min) * scale) - 0.5;
+        if (yActual < 0) {
+          yActual = 0.5;
+        }
         canvas.moveTo(width - this.tickSize, yActual);
         canvas.lineTo(width, yActual);
         y += this.step;
       }
-      return canvas.stroke();
+      canvas.stroke();
+      y = Math.floor(this.min / this.step) * this.step;
+      canvas.font = "" + this.fontSize + "px sans-serif";
+      canvas.textAlign = 'right';
+      _results = [];
+      while (y <= this.max) {
+        yActual = Math.ceil(height - (y - this.min) * scale) - 0.5;
+        canvas.textBaseline = yActual <= 0 ? 'top' : yActual >= height - 1 ? 'alphabetic' : 'middle';
+        text = formatter.format(this.span, y);
+        canvas.fillText(text, width - this.tickSize - 3, yActual);
+        _results.push(y += this.step);
+      }
+      return _results;
     };
 
     return YAxis;

@@ -18,6 +18,7 @@
         series: []
       });
       TimeseriesChart.__super__.constructor.call(this, container, opts);
+      this.xFormatter = new TimeFormatter();
       time = _.pluck(data, this.opts.timeField);
       tMin = time[0], mid = 3 <= time.length ? __slice.call(time, 1, _i = time.length - 1) : (_i = 1, []), tMax = time[_i++];
       this.xResize(tMin, tMax);

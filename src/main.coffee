@@ -11,6 +11,8 @@ class @TimeseriesChart extends Chart
 		}
 		super container, opts
 
+		@xFormatter = new TimeFormatter()
+
 		time = _.pluck data, @opts.timeField
 		[tMin, mid..., tMax] = time
 		this.xResize tMin, tMax

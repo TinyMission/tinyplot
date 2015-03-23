@@ -71,6 +71,8 @@
       });
       this.xZoomType = opts.xZoom;
       this.yZoomType = opts.yZoom;
+      this.xFormatter = new NumberFormatter();
+      this.yFormatter = new NumberFormatter();
       this.titleArea = $('<div class="title-area"></div>').appendTo(this.container);
       $("<div class='title text'>" + opts.title + "</div>").appendTo(this.titleArea);
       this.xAxisCanvasContainer = $('<div class="x-axis"><canvas/></div>').appendTo(this.container);
@@ -168,10 +170,10 @@
       var startTime, stopTime;
       startTime = new Date().getTime();
       if (this.xAxis.dirty) {
-        this.xAxis.render(this.xAxisCanvas, this.xAxisCanvasContainer.width(), this.xAxisCanvasContainer.height());
+        this.xAxis.render(this.xAxisCanvas, this.xFormatter, this.xAxisCanvasContainer.width(), this.xAxisCanvasContainer.height());
       }
       if (this.yAxis.dirty) {
-        this.yAxis.render(this.yAxisCanvas, this.yAxisCanvasContainer.width(), this.yAxisCanvasContainer.height());
+        this.yAxis.render(this.yAxisCanvas, this.yFormatter, this.yAxisCanvasContainer.width(), this.yAxisCanvasContainer.height());
       }
       this.context.clear();
       this.renderData(this.context);
