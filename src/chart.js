@@ -66,6 +66,7 @@
       this.opts = opts;
       _.defaults(opts, {
         title: 'Chart Title',
+        subtitle: '',
         xZoom: 'none',
         yZoom: 'none',
         xLabel: 'x',
@@ -77,6 +78,7 @@
       this.yFormatter = new NumberFormatter();
       this.titleArea = $('<div class="title-area"></div>').appendTo(this.container);
       $("<div class='title text'>" + opts.title + "</div>").appendTo(this.titleArea);
+      $("<div class='subtitle text'>" + opts.subtitle + "</div>").appendTo(this.titleArea);
       this.xAxisCanvasContainer = $('<div class="x-axis"><canvas/></div>').appendTo(this.container);
       this.xAxisCanvas = initCanvas(this.xAxisCanvasContainer);
       this.xAxis = new XAxis(0, 1);

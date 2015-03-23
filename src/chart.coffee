@@ -46,6 +46,7 @@ class @Chart
 
 		_.defaults opts, {
 			title: 'Chart Title'
+			subtitle: ''
 			xZoom: 'none'
 			yZoom: 'none'
 			xLabel: 'x'
@@ -59,6 +60,7 @@ class @Chart
 
 		@titleArea = $('<div class="title-area"></div>').appendTo @container
 		$("<div class='title text'>#{opts.title}</div>").appendTo @titleArea
+		$("<div class='subtitle text'>#{opts.subtitle}</div>").appendTo @titleArea
 
 		@xAxisCanvasContainer = $('<div class="x-axis"><canvas/></div>').appendTo @container
 		@xAxisCanvas = initCanvas(@xAxisCanvasContainer)
