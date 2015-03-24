@@ -44,6 +44,13 @@ class RenderContext
 					@canvas.lineTo p.x-size/2, p.y+size/2
 					@canvas.lineTo p.x+size/2, p.y+size/2
 					@canvas.fill()
+				when 'square'
+					@canvas.beginPath()
+					@canvas.moveTo p.x-size/2, p.y-size/2
+					@canvas.lineTo p.x-size/2, p.y+size/2
+					@canvas.lineTo p.x+size/2, p.y+size/2
+					@canvas.lineTo p.x+size/2, p.y-size/2
+					@canvas.fill()
 				else
 					throw "Unknown marker: #{marker}"
 

@@ -69,6 +69,14 @@
             this.canvas.lineTo(p.x + size / 2, p.y + size / 2);
             _results.push(this.canvas.fill());
             break;
+          case 'square':
+            this.canvas.beginPath();
+            this.canvas.moveTo(p.x - size / 2, p.y - size / 2);
+            this.canvas.lineTo(p.x - size / 2, p.y + size / 2);
+            this.canvas.lineTo(p.x + size / 2, p.y + size / 2);
+            this.canvas.lineTo(p.x + size / 2, p.y - size / 2);
+            _results.push(this.canvas.fill());
+            break;
           default:
             throw "Unknown marker: " + marker;
         }
