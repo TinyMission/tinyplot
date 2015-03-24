@@ -28,6 +28,27 @@ class RenderContext
 		this.plotToCanvas p
 		@canvas.lineTo p.x, p.y
 
+	drawMarkers: (marker, size, color, xs, ys) ->
+		@canvas.fillStyle = color
+		for i in [0..xs.length]
+			p = {x: xs[i], y: ys[i]}
+			this.plotToCanvas p
+			switch marker
+				when 'circle'
+					@canvas.beginPath()
+					@canvas.arc p.x, p.y, size/2, 0, Math.PI*2, false
+					@canvas.fill()
+				when 'triangle'
+					@canvas.beginPath()
+					@canvas.moveTo p.x, p.y-size/2
+					@canvas.lineTo p.x-size/2, p.y+size/2
+					@canvas.lineTo p.x+size/2, p.y+size/2
+					@canvas.fill()
+				else
+					throw "Unknown marker: #{marker}"
+
+
+
 
 # gets the canvas element out of a container and sets the size
 initCanvas = (container) ->

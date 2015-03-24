@@ -25,6 +25,7 @@ class @TimeseriesChart extends Chart
 			_.defaults s, {
 				color: '#000'
 				width: 1
+				markerSize: 6
 			}
 			for y in ys
 				if !yMin or yMin > y
@@ -46,6 +47,8 @@ class @TimeseriesChart extends Chart
 				context.moveTo {x: plotTime[0], y: ys[0]}
 				for i in [1..plotData.length-1]
 					context.lineTo {x: plotTime[i], y: ys[i]}
+			if s.marker and plotData.length < context.width/4
+				context.drawMarkers s.marker, s.markerSize, s.color, plotTime, ys
 
 window.tinyplot = {
 	TimeseriesChart: TimeseriesChart

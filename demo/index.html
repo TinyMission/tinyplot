@@ -21,7 +21,7 @@
 
     <script>
         // generate some random time series data
-        var N = 5000
+        var N = 1000
         var foo = 0
         var bar = 0
         var data = []
@@ -46,8 +46,16 @@
             subtitle: 'Scroll/pinch to zoom in time, drag to pan',
             grid: 'xy',
             series: [
-                {yField: 'foo', color: '#00a'},
-                {yField: 'bar', color: '#0a0'}
+                {
+                    yField: 'foo',
+                    color: '#00a',
+                    marker: 'circle'
+                },
+                {
+                    yField: 'bar',
+                    color: '#0a0',
+                    marker: 'triangle'
+                }
             ]
         })
     </script>

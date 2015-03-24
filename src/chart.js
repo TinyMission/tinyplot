@@ -46,6 +46,36 @@
       return this.canvas.lineTo(p.x, p.y);
     };
 
+    RenderContext.prototype.drawMarkers = function(marker, size, color, xs, ys) {
+      var i, p, _i, _ref, _results;
+      this.canvas.fillStyle = color;
+      _results = [];
+      for (i = _i = 0, _ref = xs.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        p = {
+          x: xs[i],
+          y: ys[i]
+        };
+        this.plotToCanvas(p);
+        switch (marker) {
+          case 'circle':
+            this.canvas.beginPath();
+            this.canvas.arc(p.x, p.y, size / 2, 0, Math.PI * 2, false);
+            _results.push(this.canvas.fill());
+            break;
+          case 'triangle':
+            this.canvas.beginPath();
+            this.canvas.moveTo(p.x, p.y - size / 2);
+            this.canvas.lineTo(p.x - size / 2, p.y + size / 2);
+            this.canvas.lineTo(p.x + size / 2, p.y + size / 2);
+            _results.push(this.canvas.fill());
+            break;
+          default:
+            throw "Unknown marker: " + marker;
+        }
+      }
+      return _results;
+    };
+
     return RenderContext;
 
   })();

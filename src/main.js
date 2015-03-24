@@ -31,7 +31,8 @@
         ys = _.pluck(data, s.yField);
         _.defaults(s, {
           color: '#000',
-          width: 1
+          width: 1,
+          markerSize: 6
         });
         for (_k = 0, _len1 = ys.length; _k < _len1; _k++) {
           y = ys[_k];
@@ -63,7 +64,7 @@
         s = _ref[_i];
         ys = _.pluck(plotData, s.yField);
         context.setStroke(s.color, s.width);
-        _results.push(context.stroke(function() {
+        context.stroke(function() {
           var i, _j, _ref1, _results1;
           context.moveTo({
             x: plotTime[0],
@@ -77,7 +78,12 @@
             }));
           }
           return _results1;
-        }));
+        });
+        if (s.marker && plotData.length < context.width / 4) {
+          _results.push(context.drawMarkers(s.marker, s.markerSize, s.color, plotTime, ys));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
