@@ -8,3 +8,8 @@ h1 {
     text-align: center;
     font-weight: 100;
 }
+
+
+#timeseries {
+    min-height: 480px;
+}

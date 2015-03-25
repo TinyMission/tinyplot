@@ -28,13 +28,15 @@
     top: 64px;
     bottom: 64px;
     z-index: 2; }
-  .tinyplot-chart .data {
+  .tinyplot-chart .data, .tinyplot-chart .data-intercept {
     left: 64px;
     right: 64px;
     top: 64px;
     bottom: 64px;
+    z-index: 1; }
+  .tinyplot-chart .data {
     background: #fff;
-    z-index: 1;
+    overflow: hidden;
     border: 1px solid #ccc; }
   .tinyplot-chart .x-axis {
     height: 64px;
@@ -42,5 +44,30 @@
     right: 64px;
     bottom: 0;
     z-index: 2; }
+
+.tinyplot-chart.timeseries .cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  display: none;
+  text-align: center;
+  width: 128px; }
+  .tinyplot-chart.timeseries .cursor .bar {
+    height: 100%;
+    margin: 0 auto;
+    width: 0; }
+  .tinyplot-chart.timeseries .cursor .info {
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 2px 8px;
+    position: absolute;
+    top: 8px;
+    width: 100%;
+    box-sizing: border-box; }
+    .tinyplot-chart.timeseries .cursor .info > div {
+      font-size: 12px;
+      padding: 2px 0; }
 
 /*# sourceMappingURL=tinyplot.css.map */

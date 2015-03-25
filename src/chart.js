@@ -12,7 +12,6 @@
       this.yRange = yRange;
       this.lineTo = __bind(this.lineTo, this);
       this.moveTo = __bind(this.moveTo, this);
-      this.plotToCanvas = __bind(this.plotToCanvas, this);
       ({});
     }
 
@@ -34,6 +33,11 @@
     RenderContext.prototype.plotToCanvas = function(p) {
       p.x = (p.x - this.xRange.min) / this.xRange.span * this.width;
       return p.y = (1 - (p.y - this.yRange.min) / this.yRange.span) * this.height;
+    };
+
+    RenderContext.prototype.canvasToPlot = function(p) {
+      p.x = p.x * this.xRange.span / this.width + this.xRange.min;
+      return p.y = (1 - p.y / this.height) * this.yRange.span + this.yRange.min;
     };
 
     RenderContext.prototype.moveTo = function(p) {
@@ -98,7 +102,8 @@
 
   this.Chart = (function() {
     function Chart(container, opts) {
-      var _this = this;
+      var startClick,
+        _this = this;
       this.container = $(container);
       this.container.addClass('tinyplot-chart');
       this.opts = opts;
@@ -128,8 +133,25 @@
       this.yAxis.label = this.opts.yLabel;
       this.dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo(this.container);
       this.dataCanvas = initCanvas(this.dataCanvasContainer);
-      interact(this.dataCanvasContainer[0]).draggable({
+      this.dataIntercept = $('<div class="data-intercept"></div>').appendTo(this.container);
+      startClick = false;
+      this.dataIntercept.mousedown(function(evt) {
+        return startClick = true;
+      });
+      this.dataIntercept.click(function(evt) {
+        if (startClick) {
+          _this.onClick({
+            x: evt.offsetX,
+            y: evt.offsetY
+          });
+          return startClick = false;
+        }
+      });
+      interact(this.dataIntercept[0]).draggable({
         inertia: true,
+        onstart: function(evt) {
+          return startClick = false;
+        },
         onmove: function(evt) {
           return _this.pan(evt.dx, evt.dy);
         }
@@ -209,6 +231,10 @@
       if (hasPanned) {
         return this.render();
       }
+    };
+
+    Chart.prototype.onClick = function(p) {
+      return {};
     };
 
     Chart.prototype.renderData = function(context) {

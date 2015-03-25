@@ -35,13 +35,15 @@ $text-color: #222
 		top: $axis-size
 		bottom: $axis-size
 		z-index: 2
-	.data
+	.data, .data-intercept
 		left: $axis-size
 		right: $axis-size
 		top: $axis-size
 		bottom: $axis-size
-		background: #fff
 		z-index: 1
+	.data
+		background: #fff
+		overflow: hidden
 		border: 1px solid $axis-color
 	.x-axis
 		height: $axis-size
@@ -49,3 +51,34 @@ $text-color: #222
 		right: $axis-size
 		bottom: 0
 		z-index: 2
+
+
+// Timeseries
+.tinyplot-chart.timeseries
+	.cursor
+		position: absolute
+		top: 0
+		bottom: 0
+		left: 20px
+		display: none
+		text-align: center
+		width: 128px
+		.bar
+			height: 100%
+			margin: 0 auto
+			width: 0
+		.info
+			background: #fff
+			border: 1px solid #ccc
+			box-shadow: 0 1px 8px rgba(#000, 0.1)
+			padding: 2px 8px
+			position: absolute
+			top: 8px
+			width: 100%
+			box-sizing: border-box
+			> div
+				font-size: 12px
+				padding: 2px 0
+
+
+

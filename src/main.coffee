@@ -1,4 +1,30 @@
 
+# performs a binary search on values to find the nearest index of the given value
+# assumes values is monotonic
+getIndex = (values, value) ->
+	iMin = 0
+	iMax = values.length-1
+	vMin = values[iMin]
+	vMax = values[iMax]
+	if value <= vMin
+		return 0
+	if value >= vMax
+		return values.length-1
+	while iMax-iMin > 1
+		iMid = Math.round (iMin + iMax)/2
+		vMid = values[iMid]
+		if vMid > value
+			iMax = iMid
+			vMax = vMid
+		else
+			iMin = iMid
+			vMin = vMid
+	if (value-vMin) > (vMax-value)
+		iMax
+	else
+		iMin
+
+
 class @TimeseriesChart extends Chart
 	constructor: (container, data, opts) ->
 		_.defaults opts, {
@@ -6,14 +32,17 @@ class @TimeseriesChart extends Chart
 			xLabel: 'Time'
 			xZoom: 'user'
 			yZoom: 'auto'
+			cursorColor: '#f00'
 			series: []
 		}
 		super container, opts
 
+		@container.addClass 'timeseries'
+
 		@xFormatter = new TimeFormatter()
 
-		time = _.pluck data, @opts.timeField
-		[tMin, mid..., tMax] = time
+		@time = _.pluck data, @opts.timeField
+		[tMin, mid..., tMax] = @time
 		this.xResize tMin, tMax
 		this.xClamp()
 
@@ -35,11 +64,23 @@ class @TimeseriesChart extends Chart
 		this.yResize yMin, yMax
 		this.yRound()
 
+		@cursor = $("<div class='cursor'><div class='bar' style='border-left: 1px solid #{opts.cursorColor}'></div><div class='info'></div></div>").appendTo @dataCanvasContainer
+		@cursorWidth = @cursor.width()
+
 		this.render()
 
 	renderData: (context) ->
-		plotData = _.filter(@data, (d) => t = d[@opts.timeField]; t >= context.xRange.min and t <= context.xRange.max)
+		# filter the data based on the current axis limits
+		iMin = getIndex @time, context.xRange.min
+		if iMin > 0
+			iMin -= 1
+		iMax = getIndex @time, context.xRange.max
+		if iMax < @data.length-2
+			iMax += 1
+		plotData = @data[iMin..iMax]
 		plotTime = _.pluck plotData, @opts.timeField
+
+		# render the series
 		for s in @opts.series
 			ys = _.pluck plotData, s.yField
 			context.setStroke s.color, s.width
@@ -49,6 +90,29 @@ class @TimeseriesChart extends Chart
 					context.lineTo {x: plotTime[i], y: ys[i]}
 			if s.marker and plotData.length < context.width/4
 				context.drawMarkers s.marker, s.markerSize, s.color, plotTime, ys
+
+		# update the cursor position
+		if @cursor.is ':visible'
+			time = parseFloat @cursor.data('time')
+			p = {x: time, y: 0}
+			context.plotToCanvas p
+			@cursor.css 'left', p.x-@cursorWidth/2
+
+
+	onClick: (p) ->
+		xCanvas = p.x
+		@context.canvasToPlot p
+		console.log "clicked at #{p.x} (#{xCanvas}), #{p.y}"
+		@cursor.css 'left', xCanvas-@cursorWidth/2
+		@cursor.data 'time', p.x
+		info = @cursor.find '.info'
+		info.html('')
+		t = @xFormatter.format @xAxis.span, p.x
+		info.append "<div style='color: #{@opts.cursorColor}'>#{t}</div>"
+		for s in @opts.series
+			info.append "<div style='color: #{s.color}'>#{s.yField}</div>"
+		@cursor.show()
+
 
 window.tinyplot = {
 	TimeseriesChart: TimeseriesChart

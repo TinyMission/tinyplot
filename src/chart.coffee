@@ -16,9 +16,13 @@ class RenderContext
 		cb()
 		@canvas.stroke()
 
-	plotToCanvas: (p) =>
+	plotToCanvas: (p) ->
 		p.x = (p.x - @xRange.min) / @xRange.span * @width
 		p.y = (1 - (p.y - @yRange.min) / @yRange.span) * @height
+
+	canvasToPlot: (p) ->
+		p.x = p.x * @xRange.span / @width + @xRange.min
+		p.y = (1 - p.y / @height) * @yRange.span + @yRange.min
 
 	moveTo: (p) =>
 		this.plotToCanvas p
@@ -104,9 +108,21 @@ class @Chart
 		@dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo @container
 		@dataCanvas = initCanvas @dataCanvasContainer
 
-		interact(@dataCanvasContainer[0])
+		@dataIntercept = $('<div class="data-intercept"></div>').appendTo @container
+		startClick = false
+		@dataIntercept.mousedown (evt) =>
+			startClick = true
+		@dataIntercept.click (evt) =>
+			if startClick
+				this.onClick {x: evt.offsetX, y: evt.offsetY}
+				startClick = false
+
+
+		interact(@dataIntercept[0])
 			.draggable(
 				inertia: true
+				onstart: (evt) ->
+					startClick = false
 				onmove: (evt) =>
 					this.pan evt.dx, evt.dy
 			)
@@ -175,6 +191,8 @@ class @Chart
 			hasPanned = true
 		if hasPanned
 			this.render()
+
+	onClick: (p) -> {}
 
 	renderData: (context) -> {}
 
