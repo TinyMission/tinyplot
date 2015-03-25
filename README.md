@@ -5,36 +5,36 @@ tinyplot is a simple HTML5 canvas plotting library with a focus on mobile.
 Live demo: https://rawgit.com/TinyMission/tinyplot/master/demo/index.html
 
 
-# Download
+## Download
 
 You just need to include the tinyplot CSS and Javascript files in your page.
 They are available in development and minified versions.
 For the Javascript file, there are builds with and without the dependencies (lodash, jquery.mousewheel, moment, interact).
 If you use the -deps version, the only explicit dependency is jQuery.
 
-## Development
+### Development
 
 [tinyplot.css](https://github.com/TinyMission/tinyplot/blob/master/build/tinyplot.css)
 
 [tinyplot.js](https://github.com/TinyMission/tinyplot/blob/master/build/tinyplot.js)
-
+OR
 [tinyplot-deps.js](https://github.com/TinyMission/tinyplot/blob/master/build/tinyplot-deps.js)
 
-## Minified
+### Minified
 
 [tinyplot.min.css](https://github.com/TinyMission/tinyplot/blob/master/build/tinyplot.min.css)
 
 [tinyplot.min.js](https://github.com/TinyMission/tinyplot/blob/master/build/tinyplot.min.js)
-
+OR
 [tinyplot-deps.min.js](https://github.com/TinyMission/tinyplot/blob/master/build/tinyplot-deps.min.js)
 
 
-# Usage
+## Usage
 
 In general, charts are created with the following style:
 
 ```javascript
-var chart = new <chart-type>(container, data, options)
+var chart = new tinyplot.<chart-type>(container, data, options)
 ```
 
 where <chart-type> is the type of chart you're creating (see below).
@@ -42,7 +42,7 @@ where <chart-type> is the type of chart you're creating (see below).
 *data* is an array of objects to plot.
 *options* is an object containing options for the chart.
 
-## Common Options
+### Common Options
 
 * title: the top title of the chart
 * subtitle: the subtitle (goes below the title)
@@ -51,7 +51,7 @@ where <chart-type> is the type of chart you're creating (see below).
 * xMaxTicks / yMaxTick: the maximum number of ticks on each axis (default=10, use a lower value for smaller charts).
 * grid: Which part of the grid to render. Possible values are 'none', 'x', 'y', and 'xy' (default).
 
-## Time Series Chart
+### Time Series Chart
 
 Currently, the only chart type is TimeseriesChart.
 This is meant to plot data with monotonically increasing values in the x dimension (like times).
@@ -93,7 +93,7 @@ var chart = new tinyplot.TimeseriesChart('#timeseries', data, {
 More chart types are coming soon...
 
 
-# License
+## License
 
 The MIT License (MIT)
 
