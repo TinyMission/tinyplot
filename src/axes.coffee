@@ -10,12 +10,16 @@ class @TimeFormatter
 			'mm:ss.SS'
 		else if span < 3600*1000
 			'hh:mm:ss'
-		else if span < 3600*1000*72
-			'MM/DD hh:mm A'
+		else if span < 3600*1000*24*30
+			'MM/DD|hh:mm A'
 		else
 			'YYYY-MM-DD'
 		t.format(formatString)
 
+
+ONE_MINUTE = 60000
+ONE_HOUR = ONE_MINUTE * 60
+ONE_DAY = ONE_HOUR * 24
 
 class Axis
 	constructor: (min, max) ->
@@ -27,7 +31,9 @@ class Axis
 		@fontSize = 12
 		@color = '#444'
 		@gridColor = '#ccc'
+		@maxTicks = 10
 		@label = null
+		@roundingStrategy = 'base10'
 		this.resize(min, max)
 
 	toString: ->
@@ -40,9 +46,24 @@ class Axis
 		@min = min
 		@max = max
 		@span = max - min
-		exp = Math.floor(Math.log10(@span)-1)
-		@step = Math.pow(10, exp)
-		while @span/@step > 10
+		switch @roundingStrategy
+			when 'base10'
+				exp = Math.floor(Math.log10(@span)-1)
+				@step = Math.pow(10, exp)
+			when 'time'
+				if @span < 1000
+					@step = 100
+				else if @span < ONE_MINUTE
+					@step = 1000
+				else if @span < ONE_HOUR
+					@step = ONE_MINUTE
+				else if @span < ONE_DAY*3
+					@step = ONE_HOUR
+				else
+					@step = ONE_DAY
+			else
+				throw "Invalid roundingStrategy: #{@roundingStrategy}"
+		while @span/@step > @maxTicks
 			@step *= 2
 
 	zoom: (factor) ->
@@ -110,11 +131,15 @@ class @XAxis extends Axis
 		while x <= @max
 			xActual = Math.ceil((x-@min)*scale)-0.5
 			text = formatter.format(@span, x)
-			canvas.fillText text, xActual, @tickSize + @fontSize
+			lines = text.split '|'
+			yActual = @tickSize + @fontSize
+			for line in lines
+				canvas.fillText line, xActual, yActual
+				yActual += @fontSize
 			x += @step
 
 		# draw the label
-		canvas.fillText @label, width/2, @tickSize + 3*@fontSize
+		canvas.fillText @label, width/2, @tickSize + 3*@fontSize + 2
 
 	renderGrid: (canvas, width, height) ->
 		scale = width / @span
@@ -165,7 +190,10 @@ class @YAxis extends Axis
 			else
 				'middle'
 			text = formatter.format(@span, y)
-			canvas.fillText text, width-@tickSize-3, yActual
+			lines = text.split '|'
+			for line in lines
+				canvas.fillText line, width-@tickSize-3, yActual
+				yActual += @fontSize
 			y += @step
 
 		# draw the label

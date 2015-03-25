@@ -46,11 +46,13 @@
         xZoom: 'user',
         yZoom: 'auto',
         cursorColor: '#f00',
-        series: []
+        series: [],
+        xMaxTicks: 6
       });
       TimeseriesChart.__super__.constructor.call(this, container, opts);
       this.container.addClass('timeseries');
       this.xFormatter = new TimeFormatter();
+      this.xAxis.roundingStrategy = 'time';
       this.time = _.pluck(data, this.opts.timeField);
       _ref = this.time, tMin = _ref[0], mid = 3 <= _ref.length ? __slice.call(_ref, 1, _i = _ref.length - 1) : (_i = 1, []), tMax = _ref[_i++];
       this.xResize(tMin, tMax);
@@ -132,20 +134,26 @@
     };
 
     TimeseriesChart.prototype.onClick = function(p) {
-      var info, s, t, xCanvas, _i, _len, _ref;
-      xCanvas = p.x;
+      var index, info, pCanvas, s, t, time, value, _i, _len, _ref;
       this.context.canvasToPlot(p);
-      console.log("clicked at " + p.x + " (" + xCanvas + "), " + p.y);
-      this.cursor.css('left', xCanvas - this.cursorWidth / 2);
-      this.cursor.data('time', p.x);
+      index = getIndex(this.time, p.x);
+      value = this.data[index];
+      time = value[this.opts.timeField];
+      pCanvas = {
+        x: time,
+        y: 0
+      };
+      this.context.plotToCanvas(pCanvas);
+      this.cursor.css('left', pCanvas.x - this.cursorWidth / 2);
+      this.cursor.data('time', time);
       info = this.cursor.find('.info');
       info.html('');
-      t = this.xFormatter.format(this.xAxis.span, p.x);
+      t = this.xFormatter.format(this.xAxis.span, p.x).replace('|', ' ');
       info.append("<div style='color: " + this.opts.cursorColor + "'>" + t + "</div>");
       _ref = this.opts.series;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         s = _ref[_i];
-        info.append("<div style='color: " + s.color + "'>" + s.yField + "</div>");
+        info.append("<div style='color: " + s.color + "'>" + s.yField + ": " + value[s.yField] + "</div>");
       }
       return this.cursor.show();
     };

@@ -34,12 +34,14 @@ class @TimeseriesChart extends Chart
 			yZoom: 'auto'
 			cursorColor: '#f00'
 			series: []
+			xMaxTicks: 6
 		}
 		super container, opts
 
 		@container.addClass 'timeseries'
 
 		@xFormatter = new TimeFormatter()
+		@xAxis.roundingStrategy = 'time'
 
 		@time = _.pluck data, @opts.timeField
 		[tMin, mid..., tMax] = @time
@@ -100,17 +102,20 @@ class @TimeseriesChart extends Chart
 
 
 	onClick: (p) ->
-		xCanvas = p.x
 		@context.canvasToPlot p
-		console.log "clicked at #{p.x} (#{xCanvas}), #{p.y}"
-		@cursor.css 'left', xCanvas-@cursorWidth/2
-		@cursor.data 'time', p.x
+		index = getIndex @time, p.x
+		value = @data[index]
+		time = value[@opts.timeField]
+		pCanvas = {x:time, y: 0}
+		@context.plotToCanvas pCanvas
+		@cursor.css 'left', pCanvas.x-@cursorWidth/2
+		@cursor.data 'time', time
 		info = @cursor.find '.info'
 		info.html('')
-		t = @xFormatter.format @xAxis.span, p.x
+		t = @xFormatter.format(@xAxis.span, p.x).replace '|', ' '
 		info.append "<div style='color: #{@opts.cursorColor}'>#{t}</div>"
 		for s in @opts.series
-			info.append "<div style='color: #{s.color}'>#{s.yField}</div>"
+			info.append "<div style='color: #{s.color}'>#{s.yField}: #{value[s.yField]}</div>"
 		@cursor.show()
 
 

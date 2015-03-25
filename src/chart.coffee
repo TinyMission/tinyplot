@@ -83,6 +83,8 @@ class @Chart
 			yZoom: 'none'
 			xLabel: 'x'
 			yLabel: 'y'
+			xMaxTicks: 10
+			yMaxTicks: 10
 			grid: null
 		}
 		@xZoomType = opts.xZoom
@@ -99,11 +101,13 @@ class @Chart
 		@xAxisCanvas = initCanvas(@xAxisCanvasContainer)
 		@xAxis = new XAxis 0, 1
 		@xAxis.label = @opts.xLabel
+		@xAxis.maxTicks = @opts.xMaxTicks
 
 		@yAxisCanvasContainer = $('<div class="y-axis"><canvas/></div>').appendTo @container
 		@yAxisCanvas = initCanvas(@yAxisCanvasContainer)
 		@yAxis = new YAxis 0, 1
 		@yAxis.label = @opts.yLabel
+		@yAxis.maxTicks = @opts.yMaxTicks
 
 		@dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo @container
 		@dataCanvas = initCanvas @dataCanvasContainer

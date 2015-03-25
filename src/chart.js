@@ -114,6 +114,8 @@
         yZoom: 'none',
         xLabel: 'x',
         yLabel: 'y',
+        xMaxTicks: 10,
+        yMaxTicks: 10,
         grid: null
       });
       this.xZoomType = opts.xZoom;
@@ -127,10 +129,12 @@
       this.xAxisCanvas = initCanvas(this.xAxisCanvasContainer);
       this.xAxis = new XAxis(0, 1);
       this.xAxis.label = this.opts.xLabel;
+      this.xAxis.maxTicks = this.opts.xMaxTicks;
       this.yAxisCanvasContainer = $('<div class="y-axis"><canvas/></div>').appendTo(this.container);
       this.yAxisCanvas = initCanvas(this.yAxisCanvasContainer);
       this.yAxis = new YAxis(0, 1);
       this.yAxis.label = this.opts.yLabel;
+      this.yAxis.maxTicks = this.opts.yMaxTicks;
       this.dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo(this.container);
       this.dataCanvas = initCanvas(this.dataCanvasContainer);
       this.dataIntercept = $('<div class="data-intercept"></div>').appendTo(this.container);
