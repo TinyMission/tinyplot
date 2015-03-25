@@ -7,9 +7,13 @@
         options: {
           separator: ';'
         },
-        dist: {
-          src: ['vendor/jquery.mousewheel.js', 'vendor/interact-1.2.4.js', 'vendor/moment-2.9.0.js', 'vendor/lodash-3.5.0.js', 'src/axes.js', 'src/chart.js', 'src/main.js'],
+        basic: {
+          src: ['src/axes.js', 'src/chart.js', 'src/timeseries.js'],
           dest: 'build/<%= pkg.name %>.js'
+        },
+        extras: {
+          src: ['vendor/jquery.mousewheel.js', 'vendor/interact-1.2.4.js', 'vendor/moment-2.9.0.js', 'vendor/lodash-3.5.0.js', 'src/axes.js', 'src/chart.js', 'src/timeseries.js'],
+          dest: 'build/<%= pkg.name %>-deps.js'
         }
       },
       uglify: {
@@ -17,8 +21,15 @@
           banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
         },
         build: {
-          src: 'build/<%= pkg.name %>.js',
-          dest: 'build/<%= pkg.name %>.min.js'
+          files: [
+            {
+              src: 'build/<%= pkg.name %>.js',
+              dest: 'build/<%= pkg.name %>.min.js'
+            }, {
+              src: 'build/<%= pkg.name %>-deps.js',
+              dest: 'build/<%= pkg.name %>-deps.min.js'
+            }
+          ]
         }
       },
       sass: {

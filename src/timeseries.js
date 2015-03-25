@@ -169,5 +169,5 @@
 }).call(this);
 
 /*
-//@ sourceMappingURL=main.map
+//@ sourceMappingURL=timeseries.map
 */
