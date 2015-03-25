@@ -90,6 +90,11 @@ var chart = new tinyplot.TimeseriesChart('#timeseries', data, {
 })
 ```
 
+This will produce a chart similar to the following (from the [live demo](https://rawgit.com/TinyMission/tinyplot/master/demo/index.html)):
+
+![Timeseries screenshot](https://raw.githubusercontent.com/TinyMission/tinyplot/master/demo/timeseries.png)
+
+
 More chart types are coming soon...
 
 
