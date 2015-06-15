@@ -101,14 +101,17 @@ This is like a regular bar chart, except that it can display more than two dimen
 In addition to the common options, the stacked bar chart takes the following additional options:
 
 * xOrder: an array containing the exact possible values and order of the x axis
-* groupField: name of the field by which to group and color bars
+* groupField: name of the field by which to group and color boxes
 * groupOrder: an array containing the exact possible values and order of the grouped field
 * groupColors: object mapping groupField values to CSS colors
-* opacityField: name of field that contains the opacity of each bar (optional)
+* opacityField: name of field that contains the opacity of each box (optional)
+* onClick: a function that will get called when a box is clicked (takes the data row as an input)
 
 Example call:
 
 ```javascript
+var dows = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+var groups = ['green', 'blue', 'orange']
 var chart = new tinyplot.StackedBarChart('#stacked-bar', barData, {
     xField: 'dow',
     xOrder: dows,

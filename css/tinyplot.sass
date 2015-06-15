@@ -1,14 +1,14 @@
 
-$axis-size: 64px
-$min-chart-height: 400px
-$pad: 4px
-$axis-color: #ccc
-$text-color: #222
+$tinyplot-axis-size: 64px
+$tinyplot-min-chart-height: 400px
+$tinyplot-pad: 4px
+$tinyplot-axis-color: #ccc
+$tinyplot-text-color: #222
 
 
 .tinyplot-chart
 	position: relative
-	min-height: $min-chart-height
+	min-height: $tinyplot-min-chart-height
 	font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial, sans-serif
 	> div
 		position: absolute
@@ -16,40 +16,42 @@ $text-color: #222
 		width: 100%
 		height: 100%
 	.text
-		color: $text-color
+		color: $tinyplot-text-color
 	.title-area
 		position: absolute
-		left: $axis-size
-		right: $axis-size
-		height: $axis-size
+		left: $tinyplot-axis-size
+		right: $tinyplot-axis-size
+		height: $tinyplot-axis-size
 		.title
 			text-align: center
 			font-size: 24px
-			color: $text-color
+			color: $tinyplot-text-color
 			margin-bottom: 4px
 		.subtitle
 			text-align: center
 			font-size: 16px
-			color: $text-color
+			color: $tinyplot-text-color
 	.y-axis
-		width: $axis-size
-		top: $axis-size
-		bottom: $axis-size
+		width: $tinyplot-axis-size
+		top: $tinyplot-axis-size
+		bottom: $tinyplot-axis-size
 		z-index: 2
 	.data, .data-intercept
-		left: $axis-size
-		right: $axis-size
-		top: $axis-size
-		bottom: $axis-size
+		left: $tinyplot-axis-size
+		right: $tinyplot-axis-size
+		top: $tinyplot-axis-size
+		bottom: $tinyplot-axis-size
 		z-index: 1
 	.data
 		background: #fff
 		overflow: hidden
-		border: 1px solid $axis-color
+		border: 1px solid $tinyplot-axis-color
+	.data.no-canvas
+		overflow: visible
 	.x-axis
-		height: $axis-size
-		left: $axis-size
-		right: $axis-size
+		height: $tinyplot-axis-size
+		left: $tinyplot-axis-size
+		right: $tinyplot-axis-size
 		bottom: 0
 		z-index: 2
 
@@ -84,15 +86,15 @@ $text-color: #222
 
 // Stacked Bar
 .tinyplot-chart.stacked-bar
-	min-height: $min-chart-height
+	min-height: $tinyplot-min-chart-height
 	position: relative
 	-webkit-transform: translateZ(0)
 	.data
 		position: absolute
-		left: $axis-size
-		right: $axis-size
-		top: $axis-size
-		bottom: $axis-size
+		left: $tinyplot-axis-size
+		right: $tinyplot-axis-size
+		top: $tinyplot-axis-size
+		bottom: $tinyplot-axis-size
 		background: #fff
 		.column
 			float: left
@@ -102,17 +104,18 @@ $text-color: #222
 			a.box
 				position: absolute
 				display: block
-				border-top: 1px solid #fff
-				left: $pad
-				right: $pad
+				border-bottom: 1px solid #fff
+				left: $tinyplot-pad
+				right: $tinyplot-pad
 				-webkit-transform: translateZ(0)
 				cursor: pointer
 			.total
 				text-align: center
-				font-size: 14px
+				font-size: 12px
 				position: absolute
-				left: $pad
-				right: $pad
+				left: $tinyplot-pad
+				right: $tinyplot-pad
+				padding: 1px
 				height: 16px
 				-webkit-transform: translateZ(0)
 				overflow: hidden

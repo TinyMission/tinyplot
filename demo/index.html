@@ -71,13 +71,13 @@
         barData = []
         var dows = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
         var groups = ['green', 'blue', 'orange']
-        N = 100
+        N = 50
         for (i=0; i<N; i++) {
             barData.push({
                 dow: randomSample(dows),
                 group: randomSample(groups),
-                total: Math.random()*20 + 5,
-                opacity: Math.random()>0.5 ? 1.0 : 0.5
+                total: Math.random()*20 + 10,
+                opacity: Math.random()>0.3 ? 1.0 : 0.5
             })
         }
 

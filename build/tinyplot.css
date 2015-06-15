@@ -48,6 +48,9 @@
   overflow: hidden;
   border: 1px solid #ccc;
 }
+.tinyplot-chart .data.no-canvas {
+  overflow: visible;
+}
 .tinyplot-chart .x-axis {
   height: 64px;
   left: 64px;
@@ -107,7 +110,7 @@
 .tinyplot-chart.stacked-bar .data .column a.box {
   position: absolute;
   display: block;
-  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
   left: 4px;
   right: 4px;
   -webkit-transform: translateZ(0);
@@ -115,10 +118,11 @@
 }
 .tinyplot-chart.stacked-bar .data .column .total {
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   position: absolute;
   left: 4px;
   right: 4px;
+  padding: 1px;
   height: 16px;
   -webkit-transform: translateZ(0);
   overflow: hidden;
