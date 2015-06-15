@@ -53,7 +53,6 @@ where <chart-type> is the type of chart you're creating (see below).
 
 ### Time Series Chart
 
-Currently, the only chart type is TimeseriesChart.
 This is meant to plot data with monotonically increasing values in the x dimension (like times).
 
 In addition to the common options, TimeseriesChart supports an additional set of options:
@@ -92,7 +91,50 @@ var chart = new tinyplot.TimeseriesChart('#timeseries', data, {
 
 This will produce a chart similar to the following (from the [live demo](https://rawgit.com/TinyMission/tinyplot/master/demo/index.html)):
 
-![Timeseries screenshot](https://raw.githubusercontent.com/TinyMission/tinyplot/master/demo/timeseries.png)
+![Timeseries Screenshot](https://raw.githubusercontent.com/TinyMission/tinyplot/master/demo/timeseries.png)
+
+
+### Stacked Bar Chart
+
+This is like a regular bar chart, except that it can display more than two dimensions by grouping/coloring by a third field (and changing opacity by a fourth field).
+
+In addition to the common options, the stacked bar chart takes the following additional options:
+
+* xOrder: an array containing the exact possible values and order of the x axis
+* groupField: name of the field by which to group and color bars
+* groupOrder: an array containing the exact possible values and order of the grouped field
+* groupColors: object mapping groupField values to CSS colors
+* opacityField: name of field that contains the opacity of each bar (optional)
+
+Example call:
+
+```javascript
+var chart = new tinyplot.StackedBarChart('#stacked-bar', barData, {
+    xField: 'dow',
+    xOrder: dows,
+    yField: 'total',
+    title: 'Stacked Bar Chart',
+    subtitle: 'Click on a box for more info',
+    opacityField: 'opacity',
+    groupField: 'group',
+    groupOrder: groups,
+    groupColors: {
+        green: '#2ecc71',
+        blue: '#3498db',
+        orange: '#e67e22'
+    },
+    xLabel: 'Day',
+    yLabel: 'Total ($)',
+    yPrefix: '$',
+    onClick: function (item) {
+        console.log("clicked on " + JSON.stringify(item))
+        alert(JSON.stringify(item))
+    }
+})
+
+```
+
+![Stacked Bar Screenshot](https://raw.githubusercontent.com/TinyMission/tinyplot/master/demo/stacked-bar.png)
 
 
 More chart types are coming soon...

@@ -10,6 +10,14 @@ h1 {
 }
 
 
-#timeseries {
+.demo-row {
+    clear: both;
+}
+.demo-column {
+    width: 50%;
+    float: left;
+}
+
+#timeseries, #stacked-bar {
     min-height: 480px;
 }

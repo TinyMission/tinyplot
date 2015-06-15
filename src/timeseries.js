@@ -2,8 +2,7 @@
 (function() {
   var getIndex,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   getIndex = function(values, value) {
     var iMax, iMid, iMin, vMax, vMid, vMin;
@@ -39,7 +38,7 @@
     __extends(TimeseriesChart, _super);
 
     function TimeseriesChart(container, data, opts) {
-      var mid, s, tMax, tMin, y, yMax, yMin, ys, _i, _j, _k, _len, _len1, _ref, _ref1;
+      var s, tMax, tMin, y, yMax, yMin, ys, _i, _j, _len, _len1, _ref;
       _.defaults(opts, {
         timeField: 'time',
         xLabel: 'Time',
@@ -54,23 +53,24 @@
       this.xFormatter = new TimeFormatter();
       this.xAxis.roundingStrategy = 'time';
       this.time = _.pluck(data, this.opts.timeField);
-      _ref = this.time, tMin = _ref[0], mid = 3 <= _ref.length ? __slice.call(_ref, 1, _i = _ref.length - 1) : (_i = 1, []), tMax = _ref[_i++];
+      tMin = this.time[0];
+      tMax = this.time[this.time.length - 1];
       this.xResize(tMin, tMax);
       this.xClamp();
       yMin = null;
       yMax = null;
       this.data = data;
-      _ref1 = this.opts.series;
-      for (_j = 0, _len = _ref1.length; _j < _len; _j++) {
-        s = _ref1[_j];
+      _ref = this.opts.series;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        s = _ref[_i];
         ys = _.pluck(data, s.yField);
         _.defaults(s, {
           color: '#000',
           width: 1,
           markerSize: 6
         });
-        for (_k = 0, _len1 = ys.length; _k < _len1; _k++) {
-          y = ys[_k];
+        for (_j = 0, _len1 = ys.length; _j < _len1; _j++) {
+          y = ys[_j];
           if (!yMin || yMin > y) {
             yMin = y;
           }
@@ -162,9 +162,7 @@
 
   })(Chart);
 
-  window.tinyplot = {
-    TimeseriesChart: TimeseriesChart
-  };
+  window.tinyplot.TimeseriesChart = TimeseriesChart;
 
 }).call(this);
 

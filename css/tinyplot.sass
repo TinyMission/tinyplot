@@ -5,6 +5,7 @@ $pad: 4px
 $axis-color: #ccc
 $text-color: #222
 
+
 .tinyplot-chart
 	position: relative
 	min-height: $min-chart-height
@@ -81,4 +82,37 @@ $text-color: #222
 				padding: 2px 0
 
 
-
+// Stacked Bar
+.tinyplot-chart.stacked-bar
+	min-height: $min-chart-height
+	position: relative
+	-webkit-transform: translateZ(0)
+	.data
+		position: absolute
+		left: $axis-size
+		right: $axis-size
+		top: $axis-size
+		bottom: $axis-size
+		background: #fff
+		.column
+			float: left
+			height: 100%
+			position: relative
+			vertical-align: bottom
+			a.box
+				position: absolute
+				display: block
+				border-top: 1px solid #fff
+				left: $pad
+				right: $pad
+				-webkit-transform: translateZ(0)
+				cursor: pointer
+			.total
+				text-align: center
+				font-size: 14px
+				position: absolute
+				left: $pad
+				right: $pad
+				height: 16px
+				-webkit-transform: translateZ(0)
+				overflow: hidden

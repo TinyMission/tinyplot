@@ -12,33 +12,37 @@
     <script src="../vendor/moment-2.9.0.js"></script>
     <script src="../src/axes.js"></script>
     <script src="../src/chart.js"></script>
+    <script src="../src/bar.js"></script>
     <script src="../src/timeseries.js"></script>
 </head>
 <body>
     <h1>tinyplot demo</h1>
 
-    <div id="timeseries"></div>
+    <div class="demo-row">
+        <div id="timeseries" class="demo-column"></div>
+        <div id="stacked-bar" class="demo-column"></div>
+    </div>
 
     <script>
         // generate some random time series data
+        var i
         var N = 1000
         var foo = 0
         var bar = 0
-        var data = []
+        var timeseriesData = []
         var now = moment().valueOf()
-        for (var i=0; i<N; i++) {
+        for (i=0; i<N; i++) {
             foo += (Math.random()-0.5)
             bar += (Math.random()-0.5)
-            data.push({
+            timeseriesData.push({
                 foo: foo,
                 bar: bar,
                 time: now + i*360000
             })
         }
-        console.log(data[0])
+        console.log(timeseriesData[0])
 
-
-        new tinyplot.TimeseriesChart('#timeseries', data, {
+        new tinyplot.TimeseriesChart('#timeseries', timeseriesData, {
             timeField: 'time',
             xLabel: 'Time',
             yLabel: 'Foo / Bar',
@@ -58,6 +62,48 @@
                 }
             ]
         })
+
+        var randomSample = function(a) {
+            return a[Math.round(Math.random()*(a.length-1))]
+        }
+
+        // generate some random bar chart data
+        barData = []
+        var dows = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        var groups = ['green', 'blue', 'orange']
+        N = 100
+        for (i=0; i<N; i++) {
+            barData.push({
+                dow: randomSample(dows),
+                group: randomSample(groups),
+                total: Math.random()*20 + 5,
+                opacity: Math.random()>0.5 ? 1.0 : 0.5
+            })
+        }
+
+        new tinyplot.StackedBarChart('#stacked-bar', barData, {
+            xField: 'dow',
+            xOrder: dows,
+            yField: 'total',
+            title: 'Stacked Bar Chart',
+            subtitle: 'Click on a box for more info',
+            opacityField: 'opacity',
+            groupField: 'group',
+            groupOrder: groups,
+            groupColors: {
+                green: '#2ecc71',
+                blue: '#3498db',
+                orange: '#e67e22'
+            },
+            xLabel: 'Day',
+            yLabel: 'Total ($)',
+            yPrefix: '$',
+            onClick: function (item) {
+                console.log("clicked on " + JSON.stringify(item))
+                alert(JSON.stringify(item))
+            }
+        })
+
     </script>
 </body>
 </html>

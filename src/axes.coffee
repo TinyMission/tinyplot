@@ -3,6 +3,14 @@ class @NumberFormatter
 	format: (span, value) ->
 		value.toString()
 
+class @DollarFormatter
+	format: (span, value) ->
+		s = value.toFixed(2)
+		if s.endsWith('00')
+			value.toString()
+		else
+			s
+
 class @TimeFormatter
 	format: (span, value) ->
 		t = moment(value)
@@ -107,6 +115,13 @@ class Axis
 class @XAxis extends Axis
 	constructor: (canvas, min, max) ->
 		super canvas, min, max
+		@labels = null
+
+	setFixedArray: (@labels) ->
+		@min = -0.5
+		@max = @labels.length-0.5
+		@step = 1
+		@span = @labels.length
 
 	render: (canvas, formatter, width, height) ->
 		super canvas, formatter, width, height
@@ -128,11 +143,19 @@ class @XAxis extends Axis
 		canvas.font = "#{@fontSize}px sans-serif"
 		canvas.textAlign = 'center'
 		canvas.fillStyle = @color
+		i = -1
 		while x <= @max
 			xActual = Math.ceil((x-@min)*scale)-0.5
-			text = formatter.format(@span, x)
+			text = if @labels
+				if i > -1
+					@labels[i]
+				else
+					''
+			else
+				formatter.format(@span, x)
 			lines = text.split '|'
 			yActual = @tickSize + @fontSize
+			i += 1
 			for line in lines
 				canvas.fillText line, xActual, yActual
 				yActual += @fontSize

@@ -15,6 +15,23 @@
 
   })();
 
+  this.DollarFormatter = (function() {
+    function DollarFormatter() {}
+
+    DollarFormatter.prototype.format = function(span, value) {
+      var s;
+      s = value.toFixed(2);
+      if (s.endsWith('00')) {
+        return value.toString();
+      } else {
+        return s;
+      }
+    };
+
+    return DollarFormatter;
+
+  })();
+
   this.TimeFormatter = (function() {
     function TimeFormatter() {}
 
@@ -150,10 +167,19 @@
 
     function XAxis(canvas, min, max) {
       XAxis.__super__.constructor.call(this, canvas, min, max);
+      this.labels = null;
     }
 
+    XAxis.prototype.setFixedArray = function(labels) {
+      this.labels = labels;
+      this.min = -0.5;
+      this.max = this.labels.length - 0.5;
+      this.step = 1;
+      return this.span = this.labels.length;
+    };
+
     XAxis.prototype.render = function(canvas, formatter, width, height) {
-      var line, lines, scale, text, x, xActual, yActual, _i, _len;
+      var i, line, lines, scale, text, x, xActual, yActual, _i, _len;
       XAxis.__super__.render.call(this, canvas, formatter, width, height);
       scale = width / this.span;
       x = Math.floor(this.min / this.step) * this.step;
@@ -170,11 +196,13 @@
       canvas.font = "" + this.fontSize + "px sans-serif";
       canvas.textAlign = 'center';
       canvas.fillStyle = this.color;
+      i = -1;
       while (x <= this.max) {
         xActual = Math.ceil((x - this.min) * scale) - 0.5;
-        text = formatter.format(this.span, x);
+        text = this.labels ? i > -1 ? this.labels[i] : '' : formatter.format(this.span, x);
         lines = text.split('|');
         yActual = this.tickSize + this.fontSize;
+        i += 1;
         for (_i = 0, _len = lines.length; _i < _len; _i++) {
           line = lines[_i];
           canvas.fillText(line, xActual, yActual);
@@ -278,6 +306,8 @@
 (function() {
   var RenderContext, initCanvas,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  window.tinyplot = {};
 
   RenderContext = (function() {
     function RenderContext(canvas, width, height, xRange, yRange) {
@@ -392,7 +422,9 @@
         yLabel: 'y',
         xMaxTicks: 10,
         yMaxTicks: 10,
-        grid: null
+        grid: null,
+        useDataCanvas: true,
+        interact: true
       });
       this.xZoomType = opts.xZoom;
       this.yZoomType = opts.yZoom;
@@ -411,40 +443,49 @@
       this.yAxis = new YAxis(0, 1);
       this.yAxis.label = this.opts.yLabel;
       this.yAxis.maxTicks = this.opts.yMaxTicks;
-      this.dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo(this.container);
-      this.dataCanvas = initCanvas(this.dataCanvasContainer);
-      this.dataIntercept = $('<div class="data-intercept"></div>').appendTo(this.container);
-      startClick = false;
-      this.dataIntercept.mousedown(function(evt) {
-        return startClick = true;
-      });
-      this.dataIntercept.click(function(evt) {
-        if (startClick) {
-          _this.onClick({
-            x: evt.offsetX,
-            y: evt.offsetY
-          });
-          return startClick = false;
-        }
-      });
-      interact(this.dataIntercept[0]).draggable({
-        inertia: true,
-        onstart: function(evt) {
-          return startClick = false;
-        },
-        onmove: function(evt) {
-          return _this.pan(evt.dx, evt.dy);
-        }
-      }).gesturable({
-        onmove: function(evt) {
-          return _this.zoom(1 + evt.ds);
-        }
-      });
-      this.makeContext();
-      this.container.on('mousewheel', function(evt) {
-        _this.zoom(1 + evt.deltaY / 1000);
-        return evt.preventDefault();
-      });
+      this.dataCanvasContainer = $('<div class="data"></div>').appendTo(this.container);
+      if (this.opts.useDataCanvas) {
+        this.dataCanvasContainer.append('<canvas/>');
+        this.dataCanvas = initCanvas(this.dataCanvasContainer);
+        this.makeContext();
+      } else {
+        this.dataCanvas = null;
+        this.dataCanvasContainer.addClass('no-canvas');
+        this.context = null;
+      }
+      if (this.opts.interact) {
+        this.dataIntercept = $('<div class="data-intercept"></div>').appendTo(this.container);
+        startClick = false;
+        this.dataIntercept.mousedown(function(evt) {
+          return startClick = true;
+        });
+        this.dataIntercept.click(function(evt) {
+          if (startClick) {
+            _this.onClick({
+              x: evt.offsetX,
+              y: evt.offsetY
+            });
+            return startClick = false;
+          }
+        });
+        interact(this.dataIntercept[0]).draggable({
+          inertia: true,
+          onstart: function(evt) {
+            return startClick = false;
+          },
+          onmove: function(evt) {
+            return _this.pan(evt.dx, evt.dy);
+          }
+        }).gesturable({
+          onmove: function(evt) {
+            return _this.zoom(1 + evt.ds);
+          }
+        });
+        this.container.on('mousewheel', function(evt) {
+          _this.zoom(1 + evt.deltaY / 1000);
+          return evt.preventDefault();
+        });
+      }
     }
 
     Chart.prototype.xResize = function(min, max) {
@@ -530,14 +571,16 @@
       if (this.yAxis.dirty) {
         this.yAxis.render(this.yAxisCanvas, this.yFormatter, this.yAxisCanvasContainer.width(), this.yAxisCanvasContainer.height());
       }
-      this.context.clear();
-      if (this.opts.grid && this.opts.grid.indexOf('x') >= 0) {
-        this.xAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+      if (this.context) {
+        this.context.clear();
+        if (this.opts.grid && this.opts.grid.indexOf('x') >= 0) {
+          this.xAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+        }
+        if (this.opts.grid && this.opts.grid.indexOf('y') >= 0) {
+          this.yAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+        }
+        this.renderData(this.context);
       }
-      if (this.opts.grid && this.opts.grid.indexOf('y') >= 0) {
-        this.yAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
-      }
-      this.renderData(this.context);
       stopTime = new Date().getTime();
       return console.log("rendered chart in " + (stopTime - startTime) + "ms");
     };
@@ -553,10 +596,133 @@
 */
 ;// Generated by CoffeeScript 1.6.3
 (function() {
+  var smartCeil,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  smartCeil = function(v) {
+    var divisor, log, n;
+    log = Math.log10(v);
+    divisor = Math.pow(10, Math.ceil(log) - 1);
+    n = v / divisor;
+    while (n > 10) {
+      divisor *= 2;
+      n = v / divisor;
+    }
+    return Math.ceil(v / divisor) * divisor;
+  };
+
+  this.StackedBarChart = (function(_super) {
+    __extends(StackedBarChart, _super);
+
+    function StackedBarChart(container, data, opts) {
+      var box, color, column, columnWidth, group, groups, height, opacity, self, sum, totalString, value, values, xGroup, xGroups, xUniq, xValues, y, yMax, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2;
+      _.defaults(opts, {
+        xField: 'x',
+        yField: 'y',
+        groupField: 'group',
+        opacityField: null,
+        xLabel: 'x',
+        yLabel: 'y',
+        yPrefix: '',
+        title: 'Title',
+        title_class: null,
+        useDataCanvas: false,
+        interact: false,
+        onClick: function(value) {
+          return {};
+        }
+      });
+      StackedBarChart.__super__.constructor.call(this, container, opts);
+      this.container.addClass('stacked-bar');
+      if (this.opts.yPrefix === '$') {
+        this.yFormatter = new DollarFormatter();
+      }
+      xValues = _.pluck(data, opts.xField);
+      xUniq = _.uniq(xValues);
+      if (!opts.xOrder) {
+        opts.xOrder = xUniq.sort();
+      }
+      columnWidth = 100 / opts.xOrder.length;
+      groups = _.uniq(_.pluck(data, opts.groupField));
+      if (!opts.groupOrder) {
+        opts.groupOrder = groups.sort();
+      }
+      this.xAxis.setFixedArray(opts.xOrder);
+      yMax = 0;
+      xGroups = {};
+      _ref = opts.xOrder;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        xGroup = _ref[_i];
+        values = _.filter(data, function(v) {
+          return v[opts.xField] === xGroup;
+        });
+        sum = _.reduce(values, function(memo, v) {
+          return memo + v[opts.yField];
+        }, 0);
+        yMax = Math.max(yMax, sum);
+        xGroups[xGroup] = {
+          values: values,
+          total: sum
+        };
+      }
+      this.yResize(0, yMax);
+      this.yRound();
+      yMax = this.yAxis.max;
+      self = this;
+      _ref1 = opts.xOrder;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        xGroup = _ref1[_j];
+        column = $("<div class='column' style='width: " + columnWidth + "%'></div>").appendTo(this.dataCanvasContainer);
+        y = 0;
+        _ref2 = opts.groupOrder;
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          group = _ref2[_k];
+          color = opts.groupColors[group];
+          values = _.filter(xGroups[xGroup].values, function(v) {
+            return v[opts.groupField] === group;
+          });
+          _fn = function(value) {
+            return box.click(function() {
+              self.dataCanvasContainer.find('a.box').removeClass('active');
+              $(this).addClass('active');
+              return opts.onClick(value);
+            });
+          };
+          for (_l = 0, _len3 = values.length; _l < _len3; _l++) {
+            value = values[_l];
+            height = value[opts.yField] / yMax * 100;
+            opacity = 1;
+            if (opts.opacityField) {
+              opacity = value[opts.opacityField];
+            }
+            box = $("<a class='box' style='height: " + height + "%; bottom: " + y + "%; background-color: " + color + "; opacity: " + opacity + "'></a>").appendTo(column);
+            _fn(value);
+            y += height;
+          }
+        }
+        totalString = this.yFormatter.format(this.yAxis.span, xGroups[xGroup].total);
+        $("<div class='total' style='bottom: " + y + "%'>" + opts.yPrefix + totalString + "</div>").appendTo(column);
+      }
+      this.render();
+    }
+
+    return StackedBarChart;
+
+  })(Chart);
+
+  window.tinyplot.StackedBarChart = StackedBarChart;
+
+}).call(this);
+
+/*
+//@ sourceMappingURL=bar.map
+*/
+;// Generated by CoffeeScript 1.6.3
+(function() {
   var getIndex,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   getIndex = function(values, value) {
     var iMax, iMid, iMin, vMax, vMid, vMin;
@@ -592,7 +758,7 @@
     __extends(TimeseriesChart, _super);
 
     function TimeseriesChart(container, data, opts) {
-      var mid, s, tMax, tMin, y, yMax, yMin, ys, _i, _j, _k, _len, _len1, _ref, _ref1;
+      var s, tMax, tMin, y, yMax, yMin, ys, _i, _j, _len, _len1, _ref;
       _.defaults(opts, {
         timeField: 'time',
         xLabel: 'Time',
@@ -607,23 +773,24 @@
       this.xFormatter = new TimeFormatter();
       this.xAxis.roundingStrategy = 'time';
       this.time = _.pluck(data, this.opts.timeField);
-      _ref = this.time, tMin = _ref[0], mid = 3 <= _ref.length ? __slice.call(_ref, 1, _i = _ref.length - 1) : (_i = 1, []), tMax = _ref[_i++];
+      tMin = this.time[0];
+      tMax = this.time[this.time.length - 1];
       this.xResize(tMin, tMax);
       this.xClamp();
       yMin = null;
       yMax = null;
       this.data = data;
-      _ref1 = this.opts.series;
-      for (_j = 0, _len = _ref1.length; _j < _len; _j++) {
-        s = _ref1[_j];
+      _ref = this.opts.series;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        s = _ref[_i];
         ys = _.pluck(data, s.yField);
         _.defaults(s, {
           color: '#000',
           width: 1,
           markerSize: 6
         });
-        for (_k = 0, _len1 = ys.length; _k < _len1; _k++) {
-          y = ys[_k];
+        for (_j = 0, _len1 = ys.length; _j < _len1; _j++) {
+          y = ys[_j];
           if (!yMin || yMin > y) {
             yMin = y;
           }
@@ -715,9 +882,7 @@
 
   })(Chart);
 
-  window.tinyplot = {
-    TimeseriesChart: TimeseriesChart
-  };
+  window.tinyplot.TimeseriesChart = TimeseriesChart;
 
 }).call(this);
 

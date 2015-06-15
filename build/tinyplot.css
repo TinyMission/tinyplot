@@ -85,4 +85,43 @@
   padding: 2px 0;
 }
 
+.tinyplot-chart.stacked-bar {
+  min-height: 400px;
+  position: relative;
+  -webkit-transform: translateZ(0);
+}
+.tinyplot-chart.stacked-bar .data {
+  position: absolute;
+  left: 64px;
+  right: 64px;
+  top: 64px;
+  bottom: 64px;
+  background: #fff;
+}
+.tinyplot-chart.stacked-bar .data .column {
+  float: left;
+  height: 100%;
+  position: relative;
+  vertical-align: bottom;
+}
+.tinyplot-chart.stacked-bar .data .column a.box {
+  position: absolute;
+  display: block;
+  border-top: 1px solid #fff;
+  left: 4px;
+  right: 4px;
+  -webkit-transform: translateZ(0);
+  cursor: pointer;
+}
+.tinyplot-chart.stacked-bar .data .column .total {
+  text-align: center;
+  font-size: 14px;
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 16px;
+  -webkit-transform: translateZ(0);
+  overflow: hidden;
+}
+
 /*# sourceMappingURL=tinyplot.css.map */

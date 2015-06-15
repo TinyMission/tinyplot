@@ -37,14 +37,14 @@ class @TimeseriesChart extends Chart
 			xMaxTicks: 6
 		}
 		super container, opts
-
 		@container.addClass 'timeseries'
 
 		@xFormatter = new TimeFormatter()
 		@xAxis.roundingStrategy = 'time'
 
 		@time = _.pluck data, @opts.timeField
-		[tMin, mid..., tMax] = @time
+		tMin = @time[0]
+		tMax = @time[@time.length-1]
 		this.xResize tMin, tMax
 		this.xClamp()
 
@@ -119,6 +119,4 @@ class @TimeseriesChart extends Chart
 		@cursor.show()
 
 
-window.tinyplot = {
-	TimeseriesChart: TimeseriesChart
-}
+window.tinyplot.TimeseriesChart = TimeseriesChart

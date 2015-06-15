@@ -3,6 +3,8 @@
   var RenderContext, initCanvas,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
+  window.tinyplot = {};
+
   RenderContext = (function() {
     function RenderContext(canvas, width, height, xRange, yRange) {
       this.canvas = canvas;
@@ -116,7 +118,9 @@
         yLabel: 'y',
         xMaxTicks: 10,
         yMaxTicks: 10,
-        grid: null
+        grid: null,
+        useDataCanvas: true,
+        interact: true
       });
       this.xZoomType = opts.xZoom;
       this.yZoomType = opts.yZoom;
@@ -135,40 +139,49 @@
       this.yAxis = new YAxis(0, 1);
       this.yAxis.label = this.opts.yLabel;
       this.yAxis.maxTicks = this.opts.yMaxTicks;
-      this.dataCanvasContainer = $('<div class="data"><canvas/></div>').appendTo(this.container);
-      this.dataCanvas = initCanvas(this.dataCanvasContainer);
-      this.dataIntercept = $('<div class="data-intercept"></div>').appendTo(this.container);
-      startClick = false;
-      this.dataIntercept.mousedown(function(evt) {
-        return startClick = true;
-      });
-      this.dataIntercept.click(function(evt) {
-        if (startClick) {
-          _this.onClick({
-            x: evt.offsetX,
-            y: evt.offsetY
-          });
-          return startClick = false;
-        }
-      });
-      interact(this.dataIntercept[0]).draggable({
-        inertia: true,
-        onstart: function(evt) {
-          return startClick = false;
-        },
-        onmove: function(evt) {
-          return _this.pan(evt.dx, evt.dy);
-        }
-      }).gesturable({
-        onmove: function(evt) {
-          return _this.zoom(1 + evt.ds);
-        }
-      });
-      this.makeContext();
-      this.container.on('mousewheel', function(evt) {
-        _this.zoom(1 + evt.deltaY / 1000);
-        return evt.preventDefault();
-      });
+      this.dataCanvasContainer = $('<div class="data"></div>').appendTo(this.container);
+      if (this.opts.useDataCanvas) {
+        this.dataCanvasContainer.append('<canvas/>');
+        this.dataCanvas = initCanvas(this.dataCanvasContainer);
+        this.makeContext();
+      } else {
+        this.dataCanvas = null;
+        this.dataCanvasContainer.addClass('no-canvas');
+        this.context = null;
+      }
+      if (this.opts.interact) {
+        this.dataIntercept = $('<div class="data-intercept"></div>').appendTo(this.container);
+        startClick = false;
+        this.dataIntercept.mousedown(function(evt) {
+          return startClick = true;
+        });
+        this.dataIntercept.click(function(evt) {
+          if (startClick) {
+            _this.onClick({
+              x: evt.offsetX,
+              y: evt.offsetY
+            });
+            return startClick = false;
+          }
+        });
+        interact(this.dataIntercept[0]).draggable({
+          inertia: true,
+          onstart: function(evt) {
+            return startClick = false;
+          },
+          onmove: function(evt) {
+            return _this.pan(evt.dx, evt.dy);
+          }
+        }).gesturable({
+          onmove: function(evt) {
+            return _this.zoom(1 + evt.ds);
+          }
+        });
+        this.container.on('mousewheel', function(evt) {
+          _this.zoom(1 + evt.deltaY / 1000);
+          return evt.preventDefault();
+        });
+      }
     }
 
     Chart.prototype.xResize = function(min, max) {
@@ -254,14 +267,16 @@
       if (this.yAxis.dirty) {
         this.yAxis.render(this.yAxisCanvas, this.yFormatter, this.yAxisCanvasContainer.width(), this.yAxisCanvasContainer.height());
       }
-      this.context.clear();
-      if (this.opts.grid && this.opts.grid.indexOf('x') >= 0) {
-        this.xAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+      if (this.context) {
+        this.context.clear();
+        if (this.opts.grid && this.opts.grid.indexOf('x') >= 0) {
+          this.xAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+        }
+        if (this.opts.grid && this.opts.grid.indexOf('y') >= 0) {
+          this.yAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
+        }
+        this.renderData(this.context);
       }
-      if (this.opts.grid && this.opts.grid.indexOf('y') >= 0) {
-        this.yAxis.renderGrid(this.dataCanvas, this.context.width, this.context.height);
-      }
-      this.renderData(this.context);
       stopTime = new Date().getTime();
       return console.log("rendered chart in " + (stopTime - startTime) + "ms");
     };

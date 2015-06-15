@@ -8,11 +8,11 @@ module.exports = (grunt) ->
 				separator: ';'
 			}
 			basic: {
-				src: ['src/axes.js',  'src/chart.js', 'src/timeseries.js']
+				src: ['src/axes.js',  'src/chart.js', 'src/bar.js', 'src/timeseries.js']
 				dest: 'build/<%= pkg.name %>.js'
 			}
 			extras: {
-				src: ['vendor/jquery.mousewheel.js', 'vendor/interact-1.2.4.js', 'vendor/moment-2.9.0.js','vendor/lodash-3.5.0.js', 'src/axes.js',  'src/chart.js', 'src/timeseries.js']
+				src: ['vendor/jquery.mousewheel.js', 'vendor/interact-1.2.4.js', 'vendor/moment-2.9.0.js','vendor/lodash-3.5.0.js', 'src/axes.js',  'src/chart.js', 'src/bar.js', 'src/timeseries.js']
 				dest: 'build/<%= pkg.name %>-deps.js'
 			}
 		}

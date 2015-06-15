@@ -15,6 +15,23 @@
 
   })();
 
+  this.DollarFormatter = (function() {
+    function DollarFormatter() {}
+
+    DollarFormatter.prototype.format = function(span, value) {
+      var s;
+      s = value.toFixed(2);
+      if (s.endsWith('00')) {
+        return value.toString();
+      } else {
+        return s;
+      }
+    };
+
+    return DollarFormatter;
+
+  })();
+
   this.TimeFormatter = (function() {
     function TimeFormatter() {}
 
@@ -150,10 +167,19 @@
 
     function XAxis(canvas, min, max) {
       XAxis.__super__.constructor.call(this, canvas, min, max);
+      this.labels = null;
     }
 
+    XAxis.prototype.setFixedArray = function(labels) {
+      this.labels = labels;
+      this.min = -0.5;
+      this.max = this.labels.length - 0.5;
+      this.step = 1;
+      return this.span = this.labels.length;
+    };
+
     XAxis.prototype.render = function(canvas, formatter, width, height) {
-      var line, lines, scale, text, x, xActual, yActual, _i, _len;
+      var i, line, lines, scale, text, x, xActual, yActual, _i, _len;
       XAxis.__super__.render.call(this, canvas, formatter, width, height);
       scale = width / this.span;
       x = Math.floor(this.min / this.step) * this.step;
@@ -170,11 +196,13 @@
       canvas.font = "" + this.fontSize + "px sans-serif";
       canvas.textAlign = 'center';
       canvas.fillStyle = this.color;
+      i = -1;
       while (x <= this.max) {
         xActual = Math.ceil((x - this.min) * scale) - 0.5;
-        text = formatter.format(this.span, x);
+        text = this.labels ? i > -1 ? this.labels[i] : '' : formatter.format(this.span, x);
         lines = text.split('|');
         yActual = this.tickSize + this.fontSize;
+        i += 1;
         for (_i = 0, _len = lines.length; _i < _len; _i++) {
           line = lines[_i];
           canvas.fillText(line, xActual, yActual);
