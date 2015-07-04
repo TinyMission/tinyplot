@@ -267,13 +267,13 @@
         lines = text.split('|');
         for (_i = 0, _len = lines.length; _i < _len; _i++) {
           line = lines[_i];
-          canvas.fillText(line, width - this.tickSize - 3, yActual);
+          canvas.fillText(line, width - this.tickSize, yActual);
           yActual += this.fontSize;
         }
         y += this.step;
       }
       canvas.textAlign = 'center';
-      canvas.translate(this.fontSize, height / 2);
+      canvas.translate(0, height / 2);
       canvas.rotate(3 * Math.PI / 2);
       return canvas.fillText(this.label, 0, 0);
     };
@@ -399,11 +399,16 @@
   })();
 
   initCanvas = function(container) {
-    var canvasElem;
+    var canvas, canvasElem, pixelRatio;
     canvasElem = container.find('canvas')[0];
-    canvasElem.width = container.width();
-    canvasElem.height = container.height();
-    return canvasElem.getContext('2d');
+    pixelRatio = window.devicePixelRatio || 1;
+    canvasElem.width = container.width() * pixelRatio;
+    canvasElem.height = container.height() * pixelRatio;
+    canvas = canvasElem.getContext('2d');
+    if (pixelRatio > 1) {
+      canvas.scale(pixelRatio, pixelRatio);
+    }
+    return canvas;
   };
 
   this.Chart = (function() {
@@ -413,6 +418,9 @@
       this.container = $(container);
       this.container.addClass('tinyplot-chart');
       this.opts = opts;
+      this.frameInfo = {
+        count: 0
+      };
       _.defaults(opts, {
         title: 'Chart Title',
         subtitle: '',
@@ -460,7 +468,13 @@
           return startClick = true;
         });
         this.dataIntercept.click(function(evt) {
+          var targetOffset;
           if (startClick) {
+            if (typeof evt.offsetX === "undefined" || typeof evt.offsetY === "undefined") {
+              targetOffset = $(evt.target).offset();
+              evt.offsetX = evt.pageX - targetOffset.left;
+              evt.offsetY = evt.pageY - targetOffset.top;
+            }
             _this.onClick({
               x: evt.offsetX,
               y: evt.offsetY
@@ -563,8 +577,11 @@
     };
 
     Chart.prototype.render = function() {
-      var startTime, stopTime;
-      startTime = new Date().getTime();
+      var frameRate, stopTime;
+      if (this.frameInfo.count === 0) {
+        this.frameInfo.startTime = new Date().getTime();
+      }
+      this.frameInfo.count += 1;
       if (this.xAxis.dirty) {
         this.xAxis.render(this.xAxisCanvas, this.xFormatter, this.xAxisCanvasContainer.width(), this.xAxisCanvasContainer.height());
       }
@@ -581,8 +598,12 @@
         }
         this.renderData(this.context);
       }
-      stopTime = new Date().getTime();
-      return console.log("rendered chart in " + (stopTime - startTime) + "ms");
+      if (this.frameInfo.count > 9) {
+        stopTime = new Date().getTime();
+        frameRate = this.frameInfo.count / (stopTime - this.frameInfo.startTime) * 1000;
+        console.log("average frame rate: " + frameRate);
+        return this.frameInfo.count = 0;
+      }
     };
 
     return Chart;

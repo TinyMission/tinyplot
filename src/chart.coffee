@@ -65,9 +65,13 @@ class RenderContext
 # gets the canvas element out of a container and sets the size
 initCanvas = (container) ->
 	canvasElem = container.find('canvas')[0]
-	canvasElem.width = container.width()
-	canvasElem.height = container.height()
-	canvasElem.getContext('2d')
+	pixelRatio = window.devicePixelRatio || 1
+	canvasElem.width = container.width() * pixelRatio
+	canvasElem.height = container.height() * pixelRatio
+	canvas = canvasElem.getContext('2d')
+	if pixelRatio > 1
+		canvas.scale(pixelRatio, pixelRatio)
+	canvas
 
 
 class @Chart
@@ -76,6 +80,7 @@ class @Chart
 		@container = $(container)
 		@container.addClass 'tinyplot-chart'
 		@opts = opts
+		@frameInfo = {count: 0}
 
 		_.defaults opts, {
 			title: 'Chart Title'
@@ -129,7 +134,6 @@ class @Chart
 				startClick = true
 			@dataIntercept.click (evt) =>
 				if startClick
-					console.log evt
 					if typeof evt.offsetX == "undefined" or typeof evt.offsetY == "undefined"
 						targetOffset = $(evt.target).offset()
 						evt.offsetX = evt.pageX - targetOffset.left
@@ -209,14 +213,19 @@ class @Chart
 
 	onClick: (p) -> {}
 
+	# subclasses must override this to render the actual data to the render context
 	renderData: (context) -> {}
 
 	render: ->
-		startTime = new Date().getTime()
+		if @frameInfo.count == 0
+			@frameInfo.startTime = new Date().getTime()
+		@frameInfo.count += 1
+
 		if @xAxis.dirty
 			@xAxis.render @xAxisCanvas, @xFormatter, @xAxisCanvasContainer.width(), @xAxisCanvasContainer.height()
 		if @yAxis.dirty
 			@yAxis.render @yAxisCanvas, @yFormatter, @yAxisCanvasContainer.width(), @yAxisCanvasContainer.height()
+
 		if @context
 			@context.clear()
 			if @opts.grid and @opts.grid.indexOf('x') >= 0
@@ -224,5 +233,9 @@ class @Chart
 			if @opts.grid and @opts.grid.indexOf('y') >= 0
 				@yAxis.renderGrid @dataCanvas, @context.width, @context.height
 			this.renderData @context
-		stopTime = new Date().getTime()
-#		console.log "rendered chart in #{stopTime-startTime}ms"
+
+		if @frameInfo.count > 9
+			stopTime = new Date().getTime()
+			frameRate = @frameInfo.count / (stopTime - @frameInfo.startTime) * 1000
+			console.log "average frame rate: #{frameRate}"
+			@frameInfo.count = 0

@@ -95,11 +95,16 @@
   })();
 
   initCanvas = function(container) {
-    var canvasElem;
+    var canvas, canvasElem, pixelRatio;
     canvasElem = container.find('canvas')[0];
-    canvasElem.width = container.width();
-    canvasElem.height = container.height();
-    return canvasElem.getContext('2d');
+    pixelRatio = window.devicePixelRatio || 1;
+    canvasElem.width = container.width() * pixelRatio;
+    canvasElem.height = container.height() * pixelRatio;
+    canvas = canvasElem.getContext('2d');
+    if (pixelRatio > 1) {
+      canvas.scale(pixelRatio, pixelRatio);
+    }
+    return canvas;
   };
 
   this.Chart = (function() {
@@ -109,6 +114,9 @@
       this.container = $(container);
       this.container.addClass('tinyplot-chart');
       this.opts = opts;
+      this.frameInfo = {
+        count: 0
+      };
       _.defaults(opts, {
         title: 'Chart Title',
         subtitle: '',
@@ -158,7 +166,6 @@
         this.dataIntercept.click(function(evt) {
           var targetOffset;
           if (startClick) {
-            console.log(evt);
             if (typeof evt.offsetX === "undefined" || typeof evt.offsetY === "undefined") {
               targetOffset = $(evt.target).offset();
               evt.offsetX = evt.pageX - targetOffset.left;
@@ -266,8 +273,11 @@
     };
 
     Chart.prototype.render = function() {
-      var startTime, stopTime;
-      startTime = new Date().getTime();
+      var frameRate, stopTime;
+      if (this.frameInfo.count === 0) {
+        this.frameInfo.startTime = new Date().getTime();
+      }
+      this.frameInfo.count += 1;
       if (this.xAxis.dirty) {
         this.xAxis.render(this.xAxisCanvas, this.xFormatter, this.xAxisCanvasContainer.width(), this.xAxisCanvasContainer.height());
       }
@@ -284,7 +294,12 @@
         }
         this.renderData(this.context);
       }
-      return stopTime = new Date().getTime();
+      if (this.frameInfo.count > 9) {
+        stopTime = new Date().getTime();
+        frameRate = this.frameInfo.count / (stopTime - this.frameInfo.startTime) * 1000;
+        console.log("average frame rate: " + frameRate);
+        return this.frameInfo.count = 0;
+      }
     };
 
     return Chart;
