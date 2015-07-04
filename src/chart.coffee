@@ -129,6 +129,11 @@ class @Chart
 				startClick = true
 			@dataIntercept.click (evt) =>
 				if startClick
+					console.log evt
+					if typeof evt.offsetX == "undefined" or typeof evt.offsetY == "undefined"
+						targetOffset = $(evt.target).offset()
+						evt.offsetX = evt.pageX - targetOffset.left
+						evt.offsetY = evt.pageY - targetOffset.top
 					this.onClick {x: evt.offsetX, y: evt.offsetY}
 					startClick = false
 			interact(@dataIntercept[0])
@@ -220,4 +225,4 @@ class @Chart
 				@yAxis.renderGrid @dataCanvas, @context.width, @context.height
 			this.renderData @context
 		stopTime = new Date().getTime()
-		console.log "rendered chart in #{stopTime-startTime}ms"
+#		console.log "rendered chart in #{stopTime-startTime}ms"

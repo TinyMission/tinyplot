@@ -156,7 +156,14 @@
           return startClick = true;
         });
         this.dataIntercept.click(function(evt) {
+          var targetOffset;
           if (startClick) {
+            console.log(evt);
+            if (typeof evt.offsetX === "undefined" || typeof evt.offsetY === "undefined") {
+              targetOffset = $(evt.target).offset();
+              evt.offsetX = evt.pageX - targetOffset.left;
+              evt.offsetY = evt.pageY - targetOffset.top;
+            }
             _this.onClick({
               x: evt.offsetX,
               y: evt.offsetY
@@ -277,8 +284,7 @@
         }
         this.renderData(this.context);
       }
-      stopTime = new Date().getTime();
-      return console.log("rendered chart in " + (stopTime - startTime) + "ms");
+      return stopTime = new Date().getTime();
     };
 
     return Chart;

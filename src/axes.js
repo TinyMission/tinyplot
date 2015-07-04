@@ -267,13 +267,13 @@
         lines = text.split('|');
         for (_i = 0, _len = lines.length; _i < _len; _i++) {
           line = lines[_i];
-          canvas.fillText(line, width - this.tickSize - 3, yActual);
+          canvas.fillText(line, width - this.tickSize, yActual);
           yActual += this.fontSize;
         }
         y += this.step;
       }
       canvas.textAlign = 'center';
-      canvas.translate(this.fontSize, height / 2);
+      canvas.translate(0, height / 2);
       canvas.rotate(3 * Math.PI / 2);
       return canvas.fillText(this.label, 0, 0);
     };

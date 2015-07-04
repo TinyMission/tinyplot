@@ -215,13 +215,13 @@ class @YAxis extends Axis
 			text = formatter.format(@span, y)
 			lines = text.split '|'
 			for line in lines
-				canvas.fillText line, width-@tickSize-3, yActual
+				canvas.fillText line, width-@tickSize, yActual
 				yActual += @fontSize
 			y += @step
 
 		# draw the label
 		canvas.textAlign = 'center'
-		canvas.translate @fontSize, height/2
+		canvas.translate 0, height/2
 		canvas.rotate 3*Math.PI/2
 		canvas.fillText @label, 0, 0
 
